@@ -133,6 +133,27 @@
   .beat li:last-child{border-bottom:0}
   .beat .ok{color:var(--green);font-weight:800}
 
+  .lead{color:var(--mut);font-size:14.5px;max-width:840px;margin:0 0 12px}
+  .cockpit{display:flex;gap:14px;flex-wrap:wrap;align-items:stretch}
+  .dash{flex:1 1 320px;background:#0f172a;color:#e2e8f0;border-radius:16px;padding:16px}
+  .dash-h{font-weight:800;font-size:15px;color:#7dd3fc;margin-bottom:12px}
+  .kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .kpi{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:10px 12px}
+  .kpi .v{font-size:18px;font-weight:800}
+  .kpi .v.green{color:#4ade80}
+  .kpi .k{font-size:12px;color:#94a3b8;margin-top:2px}
+  .dash .exp{margin-top:12px;display:inline-block;background:#1e3a8a;color:#fff;border-radius:9px;padding:8px 12px;font-size:13px;font-weight:700}
+  .ledger{flex:1 1 320px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:6px 6px}
+  .deal{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:11px 12px;border-bottom:1px solid var(--line);font-size:13.5px}
+  .deal:last-child{border-bottom:0}
+  .deal .nm{font-weight:700;flex:1 1 120px}
+  .deal .pl{font-weight:800;margin-left:auto}
+  .deal .pl.up{color:var(--green)} .deal .pl.down{color:#dc2626} .deal .pl.hold{color:var(--amber)}
+  .deal .sm{color:var(--mut);font-size:12.5px;flex-basis:100%}
+  .flow3{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .fstep{flex:1 1 220px;background:var(--green-bg);border:1px solid var(--green-br);border-radius:12px;padding:12px 14px;font-size:13.5px}
+  .fstep b{display:block;color:var(--green);margin-bottom:3px}
+
   footer{margin-top:30px;color:var(--mut);font-size:13px;text-align:center}
   @media(max-width:680px){ .arrow{display:none} header.top h1{font-size:24px} }
 </style>
@@ -277,8 +298,8 @@
           <span class="chev">▸</span>
         </div>
         <div class="step-body">
-          <p>Купил/продал → бот сам считает навар, % удачных сделок, лучшие категории. Данные берёт из кнопки «купил?» (ниже).</p>
-          <p class="vs"><b>Лучше конкурента:</b> такого нет ни у кого. Уведомлялка превращается в личную бизнес-панель.</p>
+          <p>Полноценная книга сделок, которая <b>заменяет ручной эксель перекупа</b>: покупку занести — один тап (бот сам подставил товар, цену, дату), продажу — по напоминанию. Навар, маржа, оборотка — сами. Подробный дашборд — ниже.</p>
+          <p class="vs"><b>Лучше конкурента:</b> учёта прибыли у него нет вообще. А это ежедневная боль перекупа — мы её закрываем.</p>
         </div>
       </article>
 
@@ -374,6 +395,38 @@
     </div>
   </section>
 
+  <!-- JOURNAL -->
+  <section class="block">
+    <h2>💰 Журнал-бухгалтерия — заменяет эксель перекупа</h2>
+    <p class="lead">Перекупы вручную ведут табличку прибыли в экселе — это их ежедневная головная боль. Мы её убираем: бот уже знает товар и цену из находки, поэтому занести сделку — один тап, а не пустая строка.</p>
+    <div class="cockpit">
+      <div class="dash">
+        <div class="dash-h">📊 Твой навар · июнь</div>
+        <div class="kpis">
+          <div class="kpi"><div class="v green">+47 200 ₽</div><div class="k">прибыль за месяц</div></div>
+          <div class="kpi"><div class="v">14 · 86%</div><div class="k">сделок · в плюс</div></div>
+          <div class="kpi"><div class="v">34%</div><div class="k">средняя маржа</div></div>
+          <div class="kpi"><div class="v">38 000 ₽</div><div class="k">лежит в товаре (6 шт)</div></div>
+          <div class="kpi"><div class="v">~5 дней</div><div class="k">оборачиваемость</div></div>
+          <div class="kpi"><div class="v">видеокарты</div><div class="k">топ-категория (+31 000)</div></div>
+        </div>
+        <span class="exp">⬇️ Выгрузить в Excel / Google</span>
+      </div>
+      <div class="ledger">
+        <div class="deal"><span class="nm">RX 580 8GB</span><span class="pl up">+2 400 ₽</span><span class="sm">куп 5 000 · прод 8 000 · расходы −600 · 4 дня</span></div>
+        <div class="deal"><span class="nm">i5-12400F</span><span class="pl up">+2 200 ₽</span><span class="sm">куп 6 500 · прод 9 000 · расходы −300 · 9 дней</span></div>
+        <div class="deal"><span class="nm">DDR4 32GB 3200</span><span class="pl hold">в наличии</span><span class="sm">куп 3 000 · лежит 2 дня</span></div>
+        <div class="deal"><span class="nm">RTX 3060 12GB</span><span class="pl down">−1 000 ₽</span><span class="sm">куп 18 000 · прод 17 000 · возврат</span></div>
+      </div>
+    </div>
+    <div class="flow3">
+      <div class="fstep"><b>1. Жмёшь «✅ Купил»</b>Бот сам подставил товар, ссылку, дату и цену. Поправишь, если торгнулся. Ноль ручного ввода.</div>
+      <div class="fstep"><b>2. Бот напомнит</b>«Продал ту RX 580? За сколько?» → вводишь число.</div>
+      <div class="fstep"><b>3. Навар сам</b>Прибыль, маржа, дни — посчитались. Хочешь — выгрузил в свой Google/Excel.</div>
+    </div>
+    <p class="lead" style="margin-top:12px">Можно занести и сделку, которую бот не находил (купил сам где-то), и импортнуть старый эксель — чтобы это была <b>вся</b> твоя бухгалтерия, а не только находки бота. Живёт в помощнике (Телеграм + кабинет + твоя Google-таблица); автономного завода не касается.</p>
+  </section>
+
   <!-- ORDER -->
   <section class="block">
     <h2>🧱 Порядок стройки</h2>
@@ -396,6 +449,7 @@
         <li><span class="ok">✓</span> Светофор доверия против развода — главная боль перекупа (у него нет вообще).</li>
         <li><span class="ok">✓</span> Запасной сборщик + справочник моделей, проверенный на реальных лотах.</li>
         <li><span class="ok">✓</span> Карточка-решение с кнопкой + веб-кабинет + журнал реального навара.</li>
+        <li><span class="ok">✓</span> Журнал-бухгалтерия заменяет ручной эксель: занести сделку — один тап, бот сам всё подставил (у него учёта прибыли нет вообще).</li>
         <li><span class="ok">✓</span> Честный режим цены — не показываем выдуманную выгоду на фейковых ценах.</li>
         <li><span class="ok">✓</span> Защита от потопа, два слоя анти-спама, флаг уверенности цены — продумано против сбоев.</li>
       </ul>
