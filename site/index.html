@@ -19,27 +19,34 @@
   header.top{background:linear-gradient(135deg,#1e3a8a,#0ea5e9);color:#fff;border-radius:20px;
     padding:26px 28px;box-shadow:0 12px 30px rgba(2,32,71,.25);}
   header.top h1{margin:0 0 6px;font-size:30px;letter-spacing:.2px;}
-  header.top p{margin:0;opacity:.95;font-size:17px;max-width:760px}
+  header.top p{margin:0;opacity:.95;font-size:16.5px;max-width:820px}
   .legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
   .chip{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.16);
     border:1px solid rgba(255,255,255,.35);color:#fff;padding:5px 11px;border-radius:999px;font-size:13px}
   .dot{width:11px;height:11px;border-radius:50%}
-  .controls{margin:18px 0 6px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+  .principle{background:#0f172a;color:#e2e8f0;border-radius:14px;padding:14px 18px;margin:14px 0;
+    display:flex;gap:13px;align-items:flex-start}
+  .principle .ico{font-size:24px;line-height:1}
+  .principle b{color:#7dd3fc}
+  .principle span{font-size:14.5px}
+
+  .controls{margin:14px 0 6px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
   .btn{background:#fff;border:1px solid var(--blue-br);color:var(--blue);font-weight:600;
     padding:9px 14px;border-radius:10px;cursor:pointer;font-size:14px}
   .btn:hover{background:var(--blue-bg)}
   .hint{color:var(--mut);font-size:13px}
 
-  .zone{border-radius:18px;padding:16px 16px 18px;margin:16px 0;border:1.5px solid var(--line);position:relative}
+  .zone{border-radius:18px;padding:16px 16px 18px;margin:14px 0;border:1.5px solid var(--line);position:relative}
   .zone.factory{background:var(--blue-bg);border-color:var(--blue-br)}
   .zone.personal{background:var(--green-bg);border-color:var(--green-br)}
   .zone.bridge{background:var(--amber-bg);border-color:var(--amber-br)}
   .zone.growth{background:var(--grey-bg);border:1.5px dashed var(--grey-br)}
-  .tab{display:inline-block;font-weight:800;font-size:13px;letter-spacing:.6px;color:#fff;
+  .tab{display:inline-block;font-weight:800;font-size:13px;letter-spacing:.5px;color:#fff;
     padding:5px 12px;border-radius:999px;margin-bottom:12px}
   .factory .tab{background:var(--blue)} .personal .tab{background:var(--green)}
   .bridge .tab{background:var(--amber)} .growth .tab{background:var(--grey)}
-  .tab small{font-weight:600;opacity:.9}
+  .tab small{font-weight:600;opacity:.92}
 
   .cards{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
   .arrow{align-self:center;font-size:26px;color:var(--mut);flex:0 0 auto}
@@ -61,12 +68,31 @@
   .vs{background:#fff7ed;border:1px solid var(--amber-br);border-radius:8px;padding:8px 10px;color:#9a3412}
   .vs b{color:#7c2d12}
 
-  .handoff{margin:14px 0;background:#fff;border:2px dashed var(--blue-br);border-radius:14px;
-    padding:12px 16px;display:flex;gap:12px;align-items:center}
+  .notes{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .ntag{background:#fff;border-radius:999px;padding:6px 12px;font-size:12.5px;color:var(--mut)}
+  .factory .ntag{border:1px dashed var(--blue-br)} .personal .ntag{border:1px dashed var(--green-br)}
+
+  .handoff{margin:14px 0;background:#0f172a;color:#fff;border-radius:14px;
+    padding:13px 16px;display:flex;gap:12px;align-items:center}
   .handoff .ico{font-size:26px}
-  .handoff b{font-size:15px}
-  .handoff span{color:var(--mut);font-size:13.5px}
-  .flow-down{text-align:center;color:var(--mut);font-size:24px;margin:-4px 0}
+  .handoff b{font-size:15px;color:#7dd3fc}
+  .handoff span{color:#cbd5e1;font-size:13.5px}
+  .handoff .oneway{margin-left:auto;background:#1e293b;border:1px solid #334155;color:#7dd3fc;
+    border-radius:8px;padding:6px 10px;font-size:12.5px;font-weight:700;white-space:nowrap}
+  .flow-down{text-align:center;color:var(--mut);font-size:24px;margin:-2px 0}
+
+  /* buy/no-buy feedback node */
+  .feedback{margin-top:14px;background:#fff;border:2px solid var(--green-br);border-radius:14px;padding:14px 15px}
+  .feedback h3{margin:0;font-size:16px;display:flex;align-items:center;gap:8px}
+  .feedback .ask{margin:8px 0 0;color:var(--mut);font-size:14px}
+  .fbtns{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .fb{padding:8px 12px;border-radius:9px;font-weight:700;font-size:13.5px}
+  .fb1{background:#dcfce7;color:#166534;border:1px solid #86efac}
+  .fb2{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+  .fb3{background:#f1f5f9;color:var(--mut);border:1px solid var(--line)}
+  .branches{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .branch{flex:1 1 170px;background:var(--green-bg);border:1px solid var(--green-br);border-radius:10px;padding:10px 12px;font-size:13px}
+  .branch b{display:block;margin-bottom:2px}
 
   .bridge .row{display:flex;gap:12px;align-items:flex-start}
   .bridge .ico{font-size:30px}
@@ -77,7 +103,6 @@
   section.block{margin-top:26px}
   section.block > h2{font-size:21px;margin:0 0 12px;display:flex;align-items:center;gap:8px}
 
-  /* sample find card */
   .tg{max-width:400px;background:#fff;border:1px solid var(--line);border-radius:16px;
     box-shadow:0 10px 26px rgba(15,23,42,.12);overflow:hidden}
   .tg .bar{background:#0088cc;color:#fff;padding:9px 14px;font-weight:700;font-size:14px}
@@ -94,7 +119,6 @@
   .tg .b3{background:#f1f5f9;color:var(--mut);border:1px solid var(--line)}
   .tg .note{font-size:12px;color:#94a3b8;margin-top:10px}
 
-  /* timeline */
   .timeline{list-style:none;margin:0;padding:0;display:flex;gap:10px;flex-wrap:wrap}
   .timeline li{flex:1 1 200px;background:#fff;border:1px solid var(--line);border-left:5px solid var(--blue);
     border-radius:12px;padding:12px 14px}
@@ -118,14 +142,19 @@
 
   <header class="top">
     <h1>🤖 Перекуп-помощник — как устроена вся машина</h1>
-    <p>Один общий «завод» находит и проверяет выгодные б/у комплектующие — у каждого клиента свой личный помощник с собственными фильтрами. Сделано под массовый запуск «под ключ», не только под одного человека.</p>
+    <p>Автономный «завод-монолит» сам 24/7 находит и проверяет выгодные б/у комплектующие. У каждого клиента — отдельный личный помощник со своими фильтрами. Связь между ними одна: помощник читает готовый склад. Сделано под массовый запуск «под ключ», не только под одного человека.</p>
     <div class="legend">
-      <span class="chip"><span class="dot" style="background:#60a5fa"></span> Завод — общий для всех</span>
+      <span class="chip"><span class="dot" style="background:#60a5fa"></span> Завод — общий, автономный</span>
       <span class="chip"><span class="dot" style="background:#34d399"></span> Личный помощник — у каждого свой</span>
       <span class="chip"><span class="dot" style="background:#fbbf24"></span> Настройки — Google-таблицы</span>
       <span class="chip"><span class="dot" style="background:#94a3b8"></span> Рост — на потом</span>
     </div>
   </header>
+
+  <div class="principle">
+    <span class="ico">🔌</span>
+    <span><b>Главный принцип: завод и помощник почти не пересекаются.</b> Одна дверь — «склад находок», в одну сторону (помощник только читает). Завод про клиентов не знает ничего и крутится сам. Поэтому его легко тестировать, масштабировать на сколько угодно клиентов и продавать его данные отдельно.</span>
+  </div>
 
   <div class="controls">
     <button class="btn" id="toggleAll">▾ Развернуть все шаги</button>
@@ -134,7 +163,7 @@
 
   <!-- ЗАВОД -->
   <div class="zone factory">
-    <span class="tab">🏭 ЗАВОД <small>· один на всех клиентов</small></span>
+    <span class="tab">🏭 ЗАВОД-МОНОЛИТ <small>· автономный · 24/7 · о клиентах не знает</small></span>
     <div class="cards">
 
       <article class="step" onclick="t(this)">
@@ -144,8 +173,8 @@
           <span class="chev">▸</span>
         </div>
         <div class="step-body">
-          <p>Раз в минуту забираем новые объявления через сервис rest-app и складываем в один общий склад. Сбор один на всех — не отдельный на каждого клиента.</p>
-          <p class="vs"><b>Лучше конкурента:</b> у него источник один. У нас есть свой запасной сборщик — не встанем, если rest-app отвалится или подорожает.</p>
+          <p>Раз в минуту забираем новые объявления через rest-app, складываем в один общий склад. Сбор один на всех.</p>
+          <p class="vs"><b>Лучше конкурента:</b> у него источник один. У нас есть запасной сборщик — не встанем, если rest-app отвалится или подорожает.</p>
         </div>
       </article>
 
@@ -154,12 +183,12 @@
       <article class="step" onclick="t(this)">
         <div class="step-head">
           <span class="num">2</span><span class="ico">🔍</span>
-          <div><h3>Опознание</h3><p class="one">Понимаем, что за железка, и выкидываем мусор.</p></div>
+          <div><h3>Опознание</h3><p class="one">Что за железка, и выкидываем мусор.</p></div>
           <span class="chev">▸</span>
         </div>
         <div class="step-body">
-          <p>По словам в заголовке + наш справочник точных моделей определяем, что это (видеокарта, память, БП…) и какая именно модель. Совсем кривые дочитывает дешёвый ИИ. Мышки, кулеры, флешки — в сторону.</p>
-          <p class="vs"><b>Лучше конкурента:</b> у него «опознание» — один кубик-обещание. У нас оно уже проверено на реальных лотах и не путает соседние модели.</p>
+          <p>По словам + наш центральный справочник моделей (его ведём мы, не клиенты) определяем модель. Кривые дочитывает ИИ. Мышки/кулеры/флешки — вон.</p>
+          <p class="vs"><b>Лучше конкурента:</b> уже проверено на реальных лотах и не путает соседние модели. Справочник — наш, заводу не нужны клиенты.</p>
         </div>
       </article>
 
@@ -168,12 +197,12 @@
       <article class="step" onclick="t(this)">
         <div class="step-head">
           <span class="num">3</span><span class="ico">💰</span>
-          <div><h3>Оценка</h3><p class="one">Сколько обычно стоит и выгодно ли это.</p></div>
+          <div><h3>Оценка</h3><p class="one">Сколько обычно стоит и выгодно ли.</p></div>
           <span class="chev">▸</span>
         </div>
         <div class="step-body">
-          <p>Считаем обычную цену по модели и региону, с поправкой на состояние и на спрос (что разбирают быстро).</p>
-          <p class="vs"><b>Честно и лучше:</b> у него ценовой движок стоит на пробных, случайных ценах — то есть его «выгода» сейчас выдумана. Мы держим этот шаг «в тесте» и включаем боевым рубильником в день оплаты Авито. Всё остальное работает уже сейчас.</p>
+          <p>Обычная цена по модели и региону + поправка на состояние и спрос. К находке клеим флаг уверенности: <b>надёжно / мало данных / устарела</b> — чтобы не кричать «выгода» там, где цены ещё нет.</p>
+          <p class="vs"><b>Честно и лучше:</b> у него движок стоит на пробных (случайных) ценах — выгода выдумана. Мы держим шаг «в тесте» и включаем рубильником в день оплаты Авито.</p>
         </div>
       </article>
 
@@ -182,39 +211,46 @@
       <article class="step" onclick="t(this)">
         <div class="step-head">
           <span class="num">4</span><span class="ico">🛡️</span>
-          <div><h3>Проверка</h3><p class="one">Живое или дохлое и не развод ли.</p></div>
+          <div><h3>Проверка</h3><p class="one">Живое/дохлое и не развод ли.</p></div>
           <span class="chev">▸</span>
         </div>
         <div class="step-body">
-          <p>Определяем: рабочее / нерабочее / непонятно. И светофор доверия 🟢🟡🔴 против развода: подозрительный продавец, «только предоплата», фото из интернета и т.п. Плюс «что спросить у продавца» и памятка безопасной сделки.</p>
-          <p class="vs"><b>Лучше конкурента:</b> защиты от развода у него НЕТ вообще — а ведь именно глубокие скидки чаще всего и есть кидок.</p>
+          <p>Рабочее / нерабочее / непонятно + светофор доверия 🟢🟡🔴 против развода + «что спросить» + памятка безопасной сделки.</p>
+          <p class="vs"><b>Лучше конкурента:</b> защиты от развода у него НЕТ вообще — а глубокие скидки чаще всего и есть кидок.</p>
         </div>
       </article>
 
+    </div>
+
+    <div class="notes">
+      <span class="ntag">🔁 Общий дедуп: одно объявление обрабатываем один раз</span>
+      <span class="ntag">♻️ Перепроверка склада: продано/пропало с Авито → убираем</span>
+      <span class="ntag">🎯 Завод крутится сам, даже если клиентов ноль</span>
     </div>
   </div>
 
   <!-- HANDOFF -->
   <div class="handoff">
     <span class="ico">📦</span>
-    <div><b>Склад находок</b> — <span>готовая карточка: модель · выгода · состояние · 🟢🟡🔴 доверие. Одна на всех, отсюда берут личные помощники.</span></div>
+    <div><b>Склад находок</b> — <span>готовая карточка: модель · выгода · состояние · 🟢🟡🔴 доверие.</span></div>
+    <span class="oneway">единственная дверь · только чтение →</span>
   </div>
   <div class="flow-down">▼</div>
 
   <!-- ЛИЧНЫЙ ПОМОЩНИК -->
   <div class="zone personal">
-    <span class="tab">🙋 ЛИЧНЫЙ ПОМОЩНИК <small>· свой у каждого клиента</small></span>
+    <span class="tab">🙋 ЛИЧНЫЙ ПОМОЩНИК <small>· свой у каждого клиента · только читает склад</small></span>
     <div class="cards">
 
       <article class="step" onclick="t(this)">
         <div class="step-head">
           <span class="num">5</span><span class="ico">🎚️</span>
-          <div><h3>Фильтр клиента</h3><p class="one">Оставляем только то, что нужно именно ему.</p></div>
+          <div><h3>Фильтр клиента</h3><p class="one">Оставляем только нужное именно ему.</p></div>
           <span class="chev">▸</span>
         </div>
         <div class="step-body">
-          <p>Из общего склада берём и оставляем только нужное этому человеку: его категории, цена, регион, порог скидки, стоп-слова. Настройки он задаёт сам (через свою Google-таблицу, см. мост ниже).</p>
-          <p class="vs"><b>Лучше конкурента:</b> у нас завод и клиент разделены начисто — поэтому клиентов можно подключать пачками, ничего не переделывая.</p>
+          <p>Из общего склада берём только нужное этому человеку: его категории, цена, регион, порог скидки, стоп-слова. Настройки — из его Google-таблицы (мост ниже).</p>
+          <p class="vs"><b>Лучше конкурента:</b> завод и клиент разделены начисто — клиентов подключаем пачками, ничего не переделывая.</p>
         </div>
       </article>
 
@@ -223,12 +259,12 @@
       <article class="step" onclick="t(this)">
         <div class="step-head">
           <span class="num">6</span><span class="ico">📲</span>
-          <div><h3>Доставка-решение</h3><p class="one">Карточка с кнопками прямо в его Телеграм.</p></div>
+          <div><h3>Доставка-решение</h3><p class="one">Карточка с кнопками в его Телеграм.</p></div>
           <span class="chev">▸</span>
         </div>
         <div class="step-body">
-          <p>Шлём карточку-решение с кнопками «написать продавцу / слежу / мимо». Тихие часы (не пишем ночью), утренний дайджест для мелочи, без повторов.</p>
-          <p class="vs"><b>Лучше конкурента:</b> у него просто карточка-уведомление. У нас — готовое решение, по которому можно действовать в один тап.</p>
+          <p>Карточка-решение с кнопками «написать продавцу / слежу / мимо». Тихие часы, утренний дайджест, без повторов. Ранжир: лучшее — в пуш, остальное — в дайджест.</p>
+          <p class="vs"><b>Лучше конкурента:</b> у него просто уведомление. У нас — готовое решение в один тап.</p>
         </div>
       </article>
 
@@ -241,8 +277,8 @@
           <span class="chev">▸</span>
         </div>
         <div class="step-body">
-          <p>Отметил «купил за X» → потом «продал за Y» → бот сам считает реальный навар, процент удачных сделок и лучшие категории.</p>
-          <p class="vs"><b>Лучше конкурента:</b> такого нет ни у кого. Уведомлялка превращается в личную бизнес-панель — и клиент уже не уйдёт.</p>
+          <p>Купил/продал → бот сам считает навар, % удачных сделок, лучшие категории. Данные берёт из кнопки «купил?» (ниже).</p>
+          <p class="vs"><b>Лучше конкурента:</b> такого нет ни у кого. Уведомлялка превращается в личную бизнес-панель.</p>
         </div>
       </article>
 
@@ -255,11 +291,34 @@
           <span class="chev">▸</span>
         </div>
         <div class="step-body">
-          <p>Личный сайт-кабинет: находки, журнал сделок, статистика, его модели и товары, настройки. Связан с его Google-таблицей.</p>
-          <p class="vs"><b>Лучше конкурента:</b> у него только чат. У нас ещё полноценный личный кабинет — масштабнее и полезнее.</p>
+          <p>Находки, журнал, статистика, его модели и товары, настройки. Связан с его Google-таблицей.</p>
+          <p class="vs"><b>Лучше конкурента:</b> у него только чат. У нас ещё личный кабинет.</p>
         </div>
       </article>
 
+    </div>
+
+    <!-- BUY / NO-BUY FEEDBACK -->
+    <div class="feedback">
+      <h3>🛎️ Напоминание «купил?» <small style="font-weight:600;color:var(--mut);font-size:13px">— новое, питает сразу три вещи</small></h3>
+      <p class="ask">Через время после находки бот спрашивает один раз, без занудства:</p>
+      <p style="margin:6px 0 0;font-weight:700">«Взял ту RX 580?»</p>
+      <div class="fbtns">
+        <span class="fb fb1">✅ Купил</span>
+        <span class="fb fb2">❌ Не купил</span>
+        <span class="fb fb3">🤔 Ещё думаю</span>
+      </div>
+      <div class="branches">
+        <div class="branch"><b>📒 В журнал</b>купил → завёл сделку → потом «продал за Y» → реальный навар</div>
+        <div class="branch"><b>🎚️ В автонастройку</b>берёт такое → больше похожего; «дорого/далеко» → сами подкрутим порог и регион</div>
+        <div class="branch"><b>📊 В данные (обезличенно)</b>общий спрос для статистики и продажи наружу — без личных сделок клиента</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <span class="ntag">🔁 Личный дедуп: одному клиенту шлём один раз</span>
+      <span class="ntag">👋 На старте — только свежее, без вывала всего склада</span>
+      <span class="ntag">🩹 «Купил → брак» = чиним завод офлайн, пачкой</span>
     </div>
   </div>
 
@@ -269,12 +328,13 @@
     <div class="row">
       <span class="ico">📊</span>
       <div>
-        <p>У каждого клиента <b>своя Google-таблица</b>: там он сам крутит фильтры и там же видит статистику, модели, товары. <b>Кабинет и таблица — две двери в одни данные.</b></p>
-        <p>Новый клиент = выдали шаблон-таблицу → он заполнил под себя → заработало. Вот это и есть «массово и под ключ».</p>
+        <p>У каждого клиента <b>своя Google-таблица</b>: сам крутит фильтры и видит статистику, модели, товары. <b>Кабинет и таблица — две двери в одни данные.</b></p>
+        <p>Новый клиент = выдали шаблон-таблицу → заполнил под себя → заработало. Это и есть «массово и под ключ».</p>
         <div class="keys">
           <span class="key">⚙️ фильтры: категории · цена · регион · порог · стоп-слова</span>
           <span class="key">📈 статистика</span>
           <span class="key">🧩 модели и товары</span>
+          <span class="key">⚡ бот читает быструю копию (синк по расписанию) — не тормозит и не падает с Google</span>
         </div>
       </div>
     </div>
@@ -286,7 +346,7 @@
     <div class="row" style="display:flex;gap:12px;align-items:flex-start">
       <span class="ico" style="font-size:28px">🌐</span>
       <div>
-        <p style="margin:4px 0 0;font-size:14px">Много клиентов — уже заложено в фундамент: завод один, личных помощников сколько угодно. А продажу данных наружу (частнику или по запросу) добавим отдельной дверью позже.</p>
+        <p style="margin:4px 0 0;font-size:14px">Много клиентов — уже в фундаменте: завод один, личных помощников сколько угодно. Продажу данных наружу добавим отдельной дверью позже — <b>только обезличенные рыночные сигналы</b> (спрос, скорость продаж по моделям), никогда не личные сделки клиентов.</p>
       </div>
     </div>
   </div>
@@ -318,11 +378,11 @@
   <section class="block">
     <h2>🧱 Порядок стройки</h2>
     <ol class="timeline">
-      <li><div class="t">ШАГ 1</div><p>Завод: добыть → опознать → проверить (развод/состояние). Работает <b>без настоящих цен</b>.</p></li>
-      <li><div class="t">ШАГ 2</div><p>Личное: фильтр → карточка в Телеграм. Уже видно находки.</p></li>
-      <li><div class="t">ШАГ 3</div><p>Мост (таблицы) + кабинет + журнал. Это и даёт «под ключ + много клиентов».</p></li>
+      <li><div class="t">ШАГ 1</div><p>Завод-монолит: добыть → опознать → проверить. Работает <b>без настоящих цен</b>.</p></li>
+      <li><div class="t">ШАГ 2</div><p>Личное: фильтр → карточка в Телеграм + кнопка «купил?». Уже видно находки и копится журнал.</p></li>
+      <li><div class="t">ШАГ 3</div><p>Мост (таблицы) + кабинет + автонастройка. «Под ключ + много клиентов».</p></li>
       <li class="gated"><div class="t">РУБИЛЬНИК</div><p>Включаем цену (шаг 3 завода) в день оплаты доступа к Авито.</p></li>
-      <li class="late"><div class="t">ПОТОМ</div><p>Продажа данных наружу.</p></li>
+      <li class="late"><div class="t">ПОТОМ</div><p>Продажа обезличенных данных наружу.</p></li>
     </ol>
   </section>
 
@@ -331,13 +391,13 @@
     <h2>🏆 Чем обходим конкурента</h2>
     <div class="beat">
       <ul>
-        <li><span class="ok">✓</span> Свой запасной сборщик — не встанем, если источник отвалится (у него источник один).</li>
-        <li><span class="ok">✓</span> Справочник точных моделей — уже проверен на реальных лотах (у него только обещание в кубике).</li>
+        <li><span class="ok">✓</span> Завод-монолит, автономный: его данные — отдельный товар на продажу (у него завод и клиент смешаны).</li>
+        <li><span class="ok">✓</span> Кнопка «купил?» — петля, которая кормит журнал, автонастройку и данные (у него такой петли нет).</li>
         <li><span class="ok">✓</span> Светофор доверия против развода — главная боль перекупа (у него нет вообще).</li>
-        <li><span class="ok">✓</span> Карточка-решение с кнопкой действия (у него просто уведомление).</li>
-        <li><span class="ok">✓</span> Веб-кабинет + журнал реального навара (у него только чат).</li>
-        <li><span class="ok">✓</span> Чистое разделение «завод / клиент» — рассчитано на массу клиентов под ключ.</li>
+        <li><span class="ok">✓</span> Запасной сборщик + справочник моделей, проверенный на реальных лотах.</li>
+        <li><span class="ok">✓</span> Карточка-решение с кнопкой + веб-кабинет + журнал реального навара.</li>
         <li><span class="ok">✓</span> Честный режим цены — не показываем выдуманную выгоду на фейковых ценах.</li>
+        <li><span class="ok">✓</span> Защита от потопа, два слоя анти-спама, флаг уверенности цены — продумано против сбоев.</li>
       </ul>
     </div>
   </section>
