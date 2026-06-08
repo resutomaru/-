@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Перекуп-помощник — схема (наглядно)</title>
+<style>
+  :root{
+    --blue:#2563eb; --blue-bg:#eff6ff; --blue-br:#bfdbfe;
+    --green:#059669; --green-bg:#ecfdf5; --green-br:#a7f3d0;
+    --amber:#d97706; --amber-bg:#fffbeb; --amber-br:#fde68a;
+    --grey:#64748b; --grey-bg:#f1f5f9; --grey-br:#cbd5e1;
+    --ink:#0f172a; --mut:#475569; --line:#e2e8f0;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#e9eef4;color:var(--ink);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.5;}
+  .wrap{max-width:1180px;margin:0 auto;padding:22px 18px 60px;}
+  header.top{background:linear-gradient(135deg,#1e3a8a,#0ea5e9);color:#fff;border-radius:20px;
+    padding:26px 28px;box-shadow:0 12px 30px rgba(2,32,71,.25);}
+  header.top h1{margin:0 0 6px;font-size:30px;letter-spacing:.2px;}
+  header.top p{margin:0;opacity:.95;font-size:17px;max-width:760px}
+  .legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+  .chip{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.16);
+    border:1px solid rgba(255,255,255,.35);color:#fff;padding:5px 11px;border-radius:999px;font-size:13px}
+  .dot{width:11px;height:11px;border-radius:50%}
+  .controls{margin:18px 0 6px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .btn{background:#fff;border:1px solid var(--blue-br);color:var(--blue);font-weight:600;
+    padding:9px 14px;border-radius:10px;cursor:pointer;font-size:14px}
+  .btn:hover{background:var(--blue-bg)}
+  .hint{color:var(--mut);font-size:13px}
+
+  .zone{border-radius:18px;padding:16px 16px 18px;margin:16px 0;border:1.5px solid var(--line);position:relative}
+  .zone.factory{background:var(--blue-bg);border-color:var(--blue-br)}
+  .zone.personal{background:var(--green-bg);border-color:var(--green-br)}
+  .zone.bridge{background:var(--amber-bg);border-color:var(--amber-br)}
+  .zone.growth{background:var(--grey-bg);border:1.5px dashed var(--grey-br)}
+  .tab{display:inline-block;font-weight:800;font-size:13px;letter-spacing:.6px;color:#fff;
+    padding:5px 12px;border-radius:999px;margin-bottom:12px}
+  .factory .tab{background:var(--blue)} .personal .tab{background:var(--green)}
+  .bridge .tab{background:var(--amber)} .growth .tab{background:var(--grey)}
+  .tab small{font-weight:600;opacity:.9}
+
+  .cards{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
+  .arrow{align-self:center;font-size:26px;color:var(--mut);flex:0 0 auto}
+  .step{flex:1 1 230px;background:#fff;border:1px solid var(--line);border-radius:14px;
+    padding:13px 14px;cursor:pointer;transition:.15s;box-shadow:0 3px 10px rgba(15,23,42,.05)}
+  .step:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(15,23,42,.10)}
+  .step-head{display:flex;align-items:flex-start;gap:10px}
+  .num{flex:0 0 auto;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;
+    font-weight:800;font-size:14px;color:#fff}
+  .factory .num{background:var(--blue)} .personal .num{background:var(--green)}
+  .ico{font-size:22px;line-height:1}
+  .step h3{margin:0;font-size:16px}
+  .one{margin:3px 0 0;color:var(--mut);font-size:13.5px}
+  .chev{margin-left:auto;color:#94a3b8;transition:.2s;font-size:14px}
+  .step.open .chev{transform:rotate(90deg)}
+  .step-body{max-height:0;overflow:hidden;transition:max-height .25s ease;}
+  .step.open .step-body{max-height:340px}
+  .step-body p{margin:10px 0 0;font-size:13.5px}
+  .vs{background:#fff7ed;border:1px solid var(--amber-br);border-radius:8px;padding:8px 10px;color:#9a3412}
+  .vs b{color:#7c2d12}
+
+  .handoff{margin:14px 0;background:#fff;border:2px dashed var(--blue-br);border-radius:14px;
+    padding:12px 16px;display:flex;gap:12px;align-items:center}
+  .handoff .ico{font-size:26px}
+  .handoff b{font-size:15px}
+  .handoff span{color:var(--mut);font-size:13.5px}
+  .flow-down{text-align:center;color:var(--mut);font-size:24px;margin:-4px 0}
+
+  .bridge .row{display:flex;gap:12px;align-items:flex-start}
+  .bridge .ico{font-size:30px}
+  .bridge p{margin:4px 0 0;font-size:14px}
+  .bridge .keys{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap}
+  .key{background:#fff;border:1px solid var(--amber-br);border-radius:8px;padding:5px 10px;font-size:13px}
+
+  section.block{margin-top:26px}
+  section.block > h2{font-size:21px;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+
+  /* sample find card */
+  .tg{max-width:400px;background:#fff;border:1px solid var(--line);border-radius:16px;
+    box-shadow:0 10px 26px rgba(15,23,42,.12);overflow:hidden}
+  .tg .bar{background:#0088cc;color:#fff;padding:9px 14px;font-weight:700;font-size:14px}
+  .tg .body{padding:14px 16px}
+  .tg .title{font-size:16px;font-weight:800;margin:0 0 6px}
+  .tg .price{font-size:15px;font-weight:700;color:#065f46}
+  .tg .li{margin:7px 0;font-size:14px}
+  .tg .trust{display:inline-block;background:#fef9c3;border:1px solid #fde047;color:#854d0e;
+    padding:3px 9px;border-radius:8px;font-weight:600;font-size:13px}
+  .tg .ask{background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:13.5px;color:var(--mut);margin-top:8px}
+  .tg .btns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .tg .b{flex:1 1 auto;text-align:center;padding:9px;border-radius:10px;font-weight:700;font-size:13.5px}
+  .tg .b1{background:#0088cc;color:#fff} .tg .b2{background:#eff6ff;color:var(--blue);border:1px solid var(--blue-br)}
+  .tg .b3{background:#f1f5f9;color:var(--mut);border:1px solid var(--line)}
+  .tg .note{font-size:12px;color:#94a3b8;margin-top:10px}
+
+  /* timeline */
+  .timeline{list-style:none;margin:0;padding:0;display:flex;gap:10px;flex-wrap:wrap}
+  .timeline li{flex:1 1 200px;background:#fff;border:1px solid var(--line);border-left:5px solid var(--blue);
+    border-radius:12px;padding:12px 14px}
+  .timeline .t{font-weight:800;color:var(--blue);font-size:13px}
+  .timeline li.gated{border-left-color:var(--amber)} .timeline li.gated .t{color:var(--amber)}
+  .timeline li.late{border-left-color:var(--grey)} .timeline li.late .t{color:var(--grey)}
+  .timeline p{margin:4px 0 0;font-size:13.5px}
+
+  .beat{background:#fff;border:1px solid var(--line);border-radius:16px;padding:8px 6px}
+  .beat ul{margin:0;padding:0;list-style:none}
+  .beat li{padding:11px 14px;border-bottom:1px solid var(--line);font-size:14.5px;display:flex;gap:10px}
+  .beat li:last-child{border-bottom:0}
+  .beat .ok{color:var(--green);font-weight:800}
+
+  footer{margin-top:30px;color:var(--mut);font-size:13px;text-align:center}
+  @media(max-width:680px){ .arrow{display:none} header.top h1{font-size:24px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <h1>🤖 Перекуп-помощник — как устроена вся машина</h1>
+    <p>Один общий «завод» находит и проверяет выгодные б/у комплектующие — у каждого клиента свой личный помощник с собственными фильтрами. Сделано под массовый запуск «под ключ», не только под одного человека.</p>
+    <div class="legend">
+      <span class="chip"><span class="dot" style="background:#60a5fa"></span> Завод — общий для всех</span>
+      <span class="chip"><span class="dot" style="background:#34d399"></span> Личный помощник — у каждого свой</span>
+      <span class="chip"><span class="dot" style="background:#fbbf24"></span> Настройки — Google-таблицы</span>
+      <span class="chip"><span class="dot" style="background:#94a3b8"></span> Рост — на потом</span>
+    </div>
+  </header>
+
+  <div class="controls">
+    <button class="btn" id="toggleAll">▾ Развернуть все шаги</button>
+    <span class="hint">Нажми на любой шаг — раскроется подробное объяснение простыми словами и «чем лучше конкурента».</span>
+  </div>
+
+  <!-- ЗАВОД -->
+  <div class="zone factory">
+    <span class="tab">🏭 ЗАВОД <small>· один на всех клиентов</small></span>
+    <div class="cards">
+
+      <article class="step" onclick="t(this)">
+        <div class="step-head">
+          <span class="num">1</span><span class="ico">🛰️</span>
+          <div><h3>Добыча</h3><p class="one">Тащим все свежие объявления Авито в общий склад.</p></div>
+          <span class="chev">▸</span>
+        </div>
+        <div class="step-body">
+          <p>Раз в минуту забираем новые объявления через сервис rest-app и складываем в один общий склад. Сбор один на всех — не отдельный на каждого клиента.</p>
+          <p class="vs"><b>Лучше конкурента:</b> у него источник один. У нас есть свой запасной сборщик — не встанем, если rest-app отвалится или подорожает.</p>
+        </div>
+      </article>
+
+      <div class="arrow">→</div>
+
+      <article class="step" onclick="t(this)">
+        <div class="step-head">
+          <span class="num">2</span><span class="ico">🔍</span>
+          <div><h3>Опознание</h3><p class="one">Понимаем, что за железка, и выкидываем мусор.</p></div>
+          <span class="chev">▸</span>
+        </div>
+        <div class="step-body">
+          <p>По словам в заголовке + наш справочник точных моделей определяем, что это (видеокарта, память, БП…) и какая именно модель. Совсем кривые дочитывает дешёвый ИИ. Мышки, кулеры, флешки — в сторону.</p>
+          <p class="vs"><b>Лучше конкурента:</b> у него «опознание» — один кубик-обещание. У нас оно уже проверено на реальных лотах и не путает соседние модели.</p>
+        </div>
+      </article>
+
+      <div class="arrow">→</div>
+
+      <article class="step" onclick="t(this)">
+        <div class="step-head">
+          <span class="num">3</span><span class="ico">💰</span>
+          <div><h3>Оценка</h3><p class="one">Сколько обычно стоит и выгодно ли это.</p></div>
+          <span class="chev">▸</span>
+        </div>
+        <div class="step-body">
+          <p>Считаем обычную цену по модели и региону, с поправкой на состояние и на спрос (что разбирают быстро).</p>
+          <p class="vs"><b>Честно и лучше:</b> у него ценовой движок стоит на пробных, случайных ценах — то есть его «выгода» сейчас выдумана. Мы держим этот шаг «в тесте» и включаем боевым рубильником в день оплаты Авито. Всё остальное работает уже сейчас.</p>
+        </div>
+      </article>
+
+      <div class="arrow">→</div>
+
+      <article class="step" onclick="t(this)">
+        <div class="step-head">
+          <span class="num">4</span><span class="ico">🛡️</span>
+          <div><h3>Проверка</h3><p class="one">Живое или дохлое и не развод ли.</p></div>
+          <span class="chev">▸</span>
+        </div>
+        <div class="step-body">
+          <p>Определяем: рабочее / нерабочее / непонятно. И светофор доверия 🟢🟡🔴 против развода: подозрительный продавец, «только предоплата», фото из интернета и т.п. Плюс «что спросить у продавца» и памятка безопасной сделки.</p>
+          <p class="vs"><b>Лучше конкурента:</b> защиты от развода у него НЕТ вообще — а ведь именно глубокие скидки чаще всего и есть кидок.</p>
+        </div>
+      </article>
+
+    </div>
+  </div>
+
+  <!-- HANDOFF -->
+  <div class="handoff">
+    <span class="ico">📦</span>
+    <div><b>Склад находок</b> — <span>готовая карточка: модель · выгода · состояние · 🟢🟡🔴 доверие. Одна на всех, отсюда берут личные помощники.</span></div>
+  </div>
+  <div class="flow-down">▼</div>
+
+  <!-- ЛИЧНЫЙ ПОМОЩНИК -->
+  <div class="zone personal">
+    <span class="tab">🙋 ЛИЧНЫЙ ПОМОЩНИК <small>· свой у каждого клиента</small></span>
+    <div class="cards">
+
+      <article class="step" onclick="t(this)">
+        <div class="step-head">
+          <span class="num">5</span><span class="ico">🎚️</span>
+          <div><h3>Фильтр клиента</h3><p class="one">Оставляем только то, что нужно именно ему.</p></div>
+          <span class="chev">▸</span>
+        </div>
+        <div class="step-body">
+          <p>Из общего склада берём и оставляем только нужное этому человеку: его категории, цена, регион, порог скидки, стоп-слова. Настройки он задаёт сам (через свою Google-таблицу, см. мост ниже).</p>
+          <p class="vs"><b>Лучше конкурента:</b> у нас завод и клиент разделены начисто — поэтому клиентов можно подключать пачками, ничего не переделывая.</p>
+        </div>
+      </article>
+
+      <div class="arrow">→</div>
+
+      <article class="step" onclick="t(this)">
+        <div class="step-head">
+          <span class="num">6</span><span class="ico">📲</span>
+          <div><h3>Доставка-решение</h3><p class="one">Карточка с кнопками прямо в его Телеграм.</p></div>
+          <span class="chev">▸</span>
+        </div>
+        <div class="step-body">
+          <p>Шлём карточку-решение с кнопками «написать продавцу / слежу / мимо». Тихие часы (не пишем ночью), утренний дайджест для мелочи, без повторов.</p>
+          <p class="vs"><b>Лучше конкурента:</b> у него просто карточка-уведомление. У нас — готовое решение, по которому можно действовать в один тап.</p>
+        </div>
+      </article>
+
+      <div class="arrow">→</div>
+
+      <article class="step" onclick="t(this)">
+        <div class="step-head">
+          <span class="num">7</span><span class="ico">📒</span>
+          <div><h3>Журнал и деньги</h3><p class="one">Считаем твой реальный навар.</p></div>
+          <span class="chev">▸</span>
+        </div>
+        <div class="step-body">
+          <p>Отметил «купил за X» → потом «продал за Y» → бот сам считает реальный навар, процент удачных сделок и лучшие категории.</p>
+          <p class="vs"><b>Лучше конкурента:</b> такого нет ни у кого. Уведомлялка превращается в личную бизнес-панель — и клиент уже не уйдёт.</p>
+        </div>
+      </article>
+
+      <div class="arrow">→</div>
+
+      <article class="step" onclick="t(this)">
+        <div class="step-head">
+          <span class="num">8</span><span class="ico">🖥️</span>
+          <div><h3>Веб-кабинет</h3><p class="one">Личная страница со всем сразу.</p></div>
+          <span class="chev">▸</span>
+        </div>
+        <div class="step-body">
+          <p>Личный сайт-кабинет: находки, журнал сделок, статистика, его модели и товары, настройки. Связан с его Google-таблицей.</p>
+          <p class="vs"><b>Лучше конкурента:</b> у него только чат. У нас ещё полноценный личный кабинет — масштабнее и полезнее.</p>
+        </div>
+      </article>
+
+    </div>
+  </div>
+
+  <!-- МОСТ -->
+  <div class="zone bridge">
+    <span class="tab">📊 МОСТ · GOOGLE-ТАБЛИЦЫ <small>· то, что делает продукт «под ключ»</small></span>
+    <div class="row">
+      <span class="ico">📊</span>
+      <div>
+        <p>У каждого клиента <b>своя Google-таблица</b>: там он сам крутит фильтры и там же видит статистику, модели, товары. <b>Кабинет и таблица — две двери в одни данные.</b></p>
+        <p>Новый клиент = выдали шаблон-таблицу → он заполнил под себя → заработало. Вот это и есть «массово и под ключ».</p>
+        <div class="keys">
+          <span class="key">⚙️ фильтры: категории · цена · регион · порог · стоп-слова</span>
+          <span class="key">📈 статистика</span>
+          <span class="key">🧩 модели и товары</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- РОСТ -->
+  <div class="zone growth">
+    <span class="tab">🌐 РОСТ · наружу (потом)</span>
+    <div class="row" style="display:flex;gap:12px;align-items:flex-start">
+      <span class="ico" style="font-size:28px">🌐</span>
+      <div>
+        <p style="margin:4px 0 0;font-size:14px">Много клиентов — уже заложено в фундамент: завод один, личных помощников сколько угодно. А продажу данных наружу (частнику или по запросу) добавим отдельной дверью позже.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SAMPLE -->
+  <section class="block">
+    <h2>👀 Что в итоге видит клиент</h2>
+    <div class="tg">
+      <div class="bar">Перекуп-помощник</div>
+      <div class="body">
+        <p class="title">🔥 RX 580 8GB Sapphire Nitro+</p>
+        <div class="price">5 000 ₽ · ниже рынка ~41% *</div>
+        <div class="li">💵 Навар при перепродаже ~2 500 ₽ *</div>
+        <div class="li">⚙️ Состояние: рабочее (по описанию)</div>
+        <div class="li"><span class="trust">🟡 Доверие: средне</span> — аккаунту 1 мес, отзывов нет</div>
+        <div class="li">⏱️ Уходит обычно за ~4 дня · висит 2 часа</div>
+        <div class="ask">❓ Спроси продавца: майнила? чек есть? проверка при встрече?</div>
+        <div class="btns">
+          <div class="b b1">Написать продавцу</div>
+          <div class="b b2">Слежу</div>
+          <div class="b b3">Мимо</div>
+        </div>
+        <div class="note">* цена и навар загораются после подключения платного доступа к Авито. Всё остальное работает уже сейчас.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ORDER -->
+  <section class="block">
+    <h2>🧱 Порядок стройки</h2>
+    <ol class="timeline">
+      <li><div class="t">ШАГ 1</div><p>Завод: добыть → опознать → проверить (развод/состояние). Работает <b>без настоящих цен</b>.</p></li>
+      <li><div class="t">ШАГ 2</div><p>Личное: фильтр → карточка в Телеграм. Уже видно находки.</p></li>
+      <li><div class="t">ШАГ 3</div><p>Мост (таблицы) + кабинет + журнал. Это и даёт «под ключ + много клиентов».</p></li>
+      <li class="gated"><div class="t">РУБИЛЬНИК</div><p>Включаем цену (шаг 3 завода) в день оплаты доступа к Авито.</p></li>
+      <li class="late"><div class="t">ПОТОМ</div><p>Продажа данных наружу.</p></li>
+    </ol>
+  </section>
+
+  <!-- BEAT -->
+  <section class="block">
+    <h2>🏆 Чем обходим конкурента</h2>
+    <div class="beat">
+      <ul>
+        <li><span class="ok">✓</span> Свой запасной сборщик — не встанем, если источник отвалится (у него источник один).</li>
+        <li><span class="ok">✓</span> Справочник точных моделей — уже проверен на реальных лотах (у него только обещание в кубике).</li>
+        <li><span class="ok">✓</span> Светофор доверия против развода — главная боль перекупа (у него нет вообще).</li>
+        <li><span class="ok">✓</span> Карточка-решение с кнопкой действия (у него просто уведомление).</li>
+        <li><span class="ok">✓</span> Веб-кабинет + журнал реального навара (у него только чат).</li>
+        <li><span class="ok">✓</span> Чистое разделение «завод / клиент» — рассчитано на массу клиентов под ключ.</li>
+        <li><span class="ok">✓</span> Честный режим цены — не показываем выдуманную выгоду на фейковых ценах.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    Черновик-схема на согласование. Скажи, что добавить/убрать/переставить — поправлю, и только потом идём в детали.
+  </footer>
+
+</div>
+
+<script>
+  function t(el){ el.classList.toggle('open'); }
+  document.getElementById('toggleAll').addEventListener('click', function(){
+    var steps = document.querySelectorAll('.step');
+    var anyClosed = document.querySelector('.step:not(.open)');
+    steps.forEach(function(s){ anyClosed ? s.classList.add('open') : s.classList.remove('open'); });
+    this.textContent = anyClosed ? '▴ Свернуть все шаги' : '▾ Развернуть все шаги';
+  });
+</script>
+</body>
+</html>
