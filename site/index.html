@@ -154,6 +154,21 @@
   .fstep{flex:1 1 220px;background:var(--green-bg);border:1px solid var(--green-br);border-radius:12px;padding:12px 14px;font-size:13.5px}
   .fstep b{display:block;color:var(--green);margin-bottom:3px}
 
+  .princ3,.detect3{display:flex;gap:12px;flex-wrap:wrap;margin:6px 0 16px}
+  .pc{flex:1 1 280px;border-radius:14px;padding:14px 16px;color:#fff;box-shadow:0 6px 16px rgba(15,23,42,.12)}
+  .pc.p1{background:linear-gradient(135deg,#7c3aed,#a855f7)}
+  .pc.p2{background:linear-gradient(135deg,#0891b2,#06b6d4)}
+  .pc.p3{background:linear-gradient(135deg,#ea580c,#f59e0b)}
+  .pc.pd{background:#0f172a}
+  .pc b{font-size:15px;display:block;margin-bottom:4px}
+  .pc span{font-size:13.5px;opacity:.96}
+  section.block > h3{font-size:16px;margin:18px 0 8px;color:var(--ink)}
+  .fuses{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px}
+  .fuse{background:#fff;border:1px solid var(--line);border-left:4px solid #ef4444;border-radius:12px;padding:11px 13px}
+  .fuse .area{font-size:11px;font-weight:800;letter-spacing:.5px;color:var(--mut);text-transform:uppercase}
+  .fuse .risk{font-size:13.5px;margin:4px 0 0}
+  .fuse .fix{font-size:13px;color:#065f46;background:#ecfdf5;border:1px solid var(--green-br);border-radius:8px;padding:6px 9px;margin-top:7px}
+
   footer{margin-top:30px;color:var(--mut);font-size:13px;text-align:center}
   @media(max-width:680px){ .arrow{display:none} header.top h1{font-size:24px} }
 </style>
@@ -452,7 +467,44 @@
         <li><span class="ok">✓</span> Журнал-бухгалтерия заменяет ручной эксель: занести сделку — один тап, бот сам всё подставил (у него учёта прибыли нет вообще).</li>
         <li><span class="ok">✓</span> Честный режим цены — не показываем выдуманную выгоду на фейковых ценах.</li>
         <li><span class="ok">✓</span> Защита от потопа, два слоя анти-спама, флаг уверенности цены — продумано против сбоев.</li>
+        <li><span class="ok">✓</span> Слой предохранителей + живой риск-реестр + датчики-метрики — у конкурента о надёжности ни слова.</li>
       </ul>
+    </div>
+  </section>
+
+  <!-- SAFEGUARDS -->
+  <section class="block" id="safeguards">
+    <h2>🛡️ Предохранители — что держит, когда что-то ломается</h2>
+    <p class="lead">Чем сложнее продукт, тем больше дыр — это закон. Поэтому не латаем по списку, а строим систему, которая ловит дыры сама, до того как они стрельнут. Спина — три принципа:</p>
+    <div class="princ3">
+      <div class="pc p1"><b>🤫 Тихо лучше, чем ложно</b><span>Неуверен — молчим или помечаем, не пушим. Один плохой пуш (развод/дохлое) дороже ста хороших.</span></div>
+      <div class="pc p2"><b>🧯 Падать безопасно</b><span>Сломалось — откат к последнему хорошему или к осторожному режиму, никогда к мусору.</span></div>
+      <div class="pc p3"><b>🧱 Изоляция взрыва</b><span>Завод и помощник раздельны — баг в одном не валит другое.</span></div>
+    </div>
+
+    <h3>Опасные места и их предохранители</h3>
+    <div class="fuses">
+      <div class="fuse"><div class="area">Добыча</div><div class="risk">🔴 Источник упал / забанен / сменил формат / съел лимит.</div><div class="fix">🔧 Запасной сборщик + датчик «нет лотов N минут» + проверка формата (кривое в карантин) + жёсткий потолок запросов.</div></div>
+      <div class="fuse"><div class="area">Стоимость</div><div class="risk">🔴 Разгон запросов/LLM → внезапный счёт.</div><div class="fix">🔧 Потолок бюджета + автостоп при превышении + LLM только на спорное + кэш ответов.</div></div>
+      <div class="fuse"><div class="area">Опознание</div><div class="risk">🔴 Неверная модель / мусор в категории.</div><div class="fix">🔧 «Не уверен — не находка» + флаг уверенности + golden-набор + превью-дифф перед каждым изменением словаря.</div></div>
+      <div class="fuse"><div class="area">Цена</div><div class="risk">🔴 Ложная «выгода» (фейк-цена / тонкая выборка / выброс / протухло).</div><div class="fix">🔧 Тест-режим до реальных цен + минимум K лотов + отсев выбросов + «скидка >70% — не зелёное» + флаг устаревания.</div></div>
+      <div class="fuse"><div class="area">Состояние</div><div class="risk">🔴 Дохлое помечено рабочим.</div><div class="fix">🔧 Сомнение → «непонятно», не «рабочее»; golden с нулевой терпимостью dead→working; LLM на спорное.</div></div>
+      <div class="fuse"><div class="area">Доверие</div><div class="risk">🔴 Светофор пропустил развод (ложный зелёный).</div><div class="fix">🔧 Перекос в осторожность (сомнение → жёлтый); красное не прячем, показываем с предупреждением; дообучение на «купил→развод».</div></div>
+      <div class="fuse"><div class="area">Помощник</div><div class="risk">🔴 Спам/потоп (баг / кривой конфиг / вывал склада).</div><div class="fix">🔧 Жёсткий лимит пушей в час/день на клиента; тихие часы; на старте только свежее; перебор → дайджест; пауза-клиента.</div></div>
+      <div class="fuse"><div class="area">Мультитенант</div><div class="risk">🔴 Чужие данные ушли не тому клиенту.</div><div class="fix">🔧 client_id на всём + проверка на каждом сообщении; chat_id подтверждаем при подключении; тест «второй клиент видит другое».</div></div>
+      <div class="fuse"><div class="area">Конфиг</div><div class="risk">🔴 Кривая таблица (цена 0 / всё подряд).</div><div class="fix">🔧 Проверка диапазонов на синке; сломалась → работаем по последним хорошим настройкам + сигнал клиенту.</div></div>
+      <div class="fuse"><div class="area">Деньги</div><div class="risk">🔴 Журнал считает навар неверно → рушится доверие к цифрам.</div><div class="fix">🔧 Показываем разбор (закупка + расходы → навар), всё редактируемо; продажу не угадываем; «оценка» и «факт» — разной меткой.</div></div>
+      <div class="fuse"><div class="area">Данные</div><div class="risk">🔴 Утечка личного при продаже данных.</div><div class="fix">🔧 Наружу только обезличенные агрегаты (человека не вычислить); личные сделки не продаём; согласие в условиях.</div></div>
+      <div class="fuse"><div class="area">Релизы</div><div class="risk">🔴 Правка молча ломает другое; старый сниппет вернулся.</div><div class="fix">🔧 golden-набор на каждый мозг (без прохождения не катим); превью-дифф; git = единственная правда; раскатка ступенями.</div></div>
+      <div class="fuse"><div class="area">Инфра</div><div class="risk">🔴 Крутится на ПК, не 24/7 → дыры в медиане.</div><div class="fix">🔧 Завод на облаке всегда-вкл + датчик аптайма + автоперезапуск.</div></div>
+      <div class="fuse"><div class="area">Секреты</div><div class="risk">🔴 Токен в URL/коде; потеря данных.</div><div class="fix">🔧 Секрет-хранилище + ротация; БД с бэкапами + регулярные выгрузки.</div></div>
+    </div>
+
+    <h3>Как не проморгать дыру вовремя</h3>
+    <div class="detect3">
+      <div class="pc pd"><b>📋 Живой реестр рисков</b><span>Каждая дыра записана со статусом и своим предохранителем. Растёт продукт — растёт реестр, ничего не теряется.</span></div>
+      <div class="pc pd"><b>📈 Датчики-метрики</b><span>Точность находок, ложные «ниже рынка», dead→working, пропущенные разводы, спам-рейт, расход денег. Тревога на отклонении — до жалобы клиента.</span></div>
+      <div class="pc pd"><b>🌑 Теневой режим</b><span>Всё новое сначала молча на реальных данных; смотрим датчики; потом включаем клиентам.</span></div>
     </div>
   </section>
 
