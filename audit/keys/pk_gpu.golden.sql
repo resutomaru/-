@@ -1,5 +1,5 @@
--- pk_gpu — golden / regression set + harness (закрывает E14 для ключей; проверяет E9-фикс).
--- Истина (expected) выведена из РЕАЛЬНОЙ gpu-выгрузки 2026-06-10 (266 строк) + синтетика на E9.
+-- pk_gpu — golden / regression set + harness (закрывает E14 для ключей; проверяет E9-фикс + v2-добор).
+-- Истина (expected) из РЕАЛЬНЫХ gpu-выгрузок 2026-06-10 (266 + 22-нулевых) + синтетика на E9.
 -- Прогон в Supabase SQL Editor, где развёрнута pk_gpu(). Норма: mismatches = 0.
 -- ВАЖНО: expected = ИСТИНА (ground truth), а не предсказание текущей функции.
 create table if not exists gpu_key_golden (
@@ -11,6 +11,7 @@ create table if not exists gpu_key_golden (
 );
 delete from gpu_key_golden;
 insert into gpu_key_golden (title, model, expected, note) values
+-- v1: формат, суффиксы, порядок ветвей, E9
 ('Видеокарта Radeon rx 570 4gb',                 'PULSE Radeon RX 570 4GB',                      'rx570_4g',          'база'),
 ('Видеокарта gtx 1070ti 8GB',                    'GeForce GTX 1070 Ti JetStream 8GB',            'gtx1070ti_8g',      'суффикс ti'),
 ('Игровая видеокарта RX 6800хt 16гб',            'AMD Radeon RX 6800 XT 16GB',                   'rx6800xt_16g',      'xt + де-гомоглиф х/гб'),
@@ -28,7 +29,13 @@ insert into gpu_key_golden (title, model, expected, note) values
 ('Неисправная видеокарта AMD r9 370 4gb 256 bit gddr', 'Radeon R9 370 4Gb',                     'r9370_4g',          'покрытие: AMD R9'),
 ('Видеокарта gts 450 1gb ggr5',                  'GeForce GTS 450 1GB',                          'gts450_1g',         'покрытие: nVidia GTS'),
 ('Видеокарта rx 570 8gb',                        'AMD Radeon RX 580 8GB',                        'rx580_8g',          'model-first: продавец мис-тегнул (остаток E17, осознанно)'),
-('AMD Radeon R3 512GB',                          null,                                           null,                'R3 не дискретка + guard объёма: 512GB не даёт мусор');
+('AMD Radeon R3 512GB',                          null,                                           null,                'R3 не дискретка + guard объёма: 512GB не даёт мусор'),
+-- v2: base-фолбэк на заголовок (§4.4), Intel Arc (E11), гард сборок, намеренный safe-null
+('Видеокарта gt210 1gb ddr3',                    'NVIDIA GeForce 210 1GB',                       'gt210_1g',          'v2 title-fallback: model «GeForce 210» без GT, в заголовке gt210'),
+('Видеокарта gtx 1050 ti 4gb',                   'GeForce 1050 Ti Dual OC 4GB',                  'gtx1050ti_4g',      'v2 title-fallback: model «GeForce 1050 Ti» без GTX'),
+('Видеокарта Intel arc b580 icraft',             'Intel Arc B580 iCraft 12GB',                   'arcb580_12g',       'v2: Intel Arc (E11)'),
+('Комплект i5 9400f +мат.плата + RX 590',        'Core i5-9400F',                                null,                'v2: гард сборок — НЕ ключим бандл даже фолбэком'),
+('Видеокарта затычка с hdmi',                    'GeForce 210 1GB',                              null,                'намеренный safe-null: префикса нет нигде, диапазон-догадка небезопасна');
 
 create or replace view gpu_key_eval as
   select g.*, pk_gpu(g.model, g.title) as predicted from gpu_key_golden g;
