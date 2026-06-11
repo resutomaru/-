@@ -74,6 +74,11 @@ insert into key_golden (category, title, model, brand, expected, danger, err, so
 ('ssd','Crucial MX500 500GB SATA',null,'Crucial','crucial-500gb-sata',false,'baseline','regression','crucial'),
 ('ssd','SSD накопитель 17TB',null,null,null,false,'E12','regression','17ТБ вне диапазона 1..16 → null (E12 sanity)'),
 ('ssd','SSD Samsung 970 EVO',null,'Samsung',null,false,'baseline','regression','без объёма → null'),
+('ssd','KingSpec SSD 480',null,null,'kingspec-480gb',false,'probeC','regression','объём без единицы из allowlist'),
+('ssd','SSD M2 Samsung 1000G',null,null,'samsung-1000gb-nvme',false,'probeC','regression','голая g + m2→nvme'),
+('ssd','Crucial MX500',null,'Crucial',null,true,'probeC','regression','НЕ путать модель MX500 с объёмом 500 (danger)'),
+('ssd','Samsung 970 EVO 250GB',null,'Samsung','samsung-250gb',false,'probeC','regression','970=модель, объём=250 (контроль)'),
+('ssd','SSD U.2 3,84TB Samsung PM963',null,'Samsung','samsung-3840gb',false,'decimal-tb','gap','дробные ТБ пока не парсим (редкий enterprise)'),
 -- ---- PSU (coalesce(pk_psu(model),pk_psu(title))) ----------------------------
 ('psu','Блок питания Corsair RM650 650W 80+ Gold',null,null,'650w',false,'baseline','regression','явная мощность'),
 ('psu','БП DeepCool PK500D 500 Вт ATX',null,null,'500w',false,'baseline','regression','кирилл. «вт»'),
