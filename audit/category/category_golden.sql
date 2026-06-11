@@ -77,6 +77,10 @@ insert into category_golden (title, model, expected, danger, err, source, note) 
 ('Адаптер M.2 NVMe — Oculink SFF-8611',           null, 'other',    true,  'D6',         'regression', 'зонд A: адаптер (^адаптер; в ssd-гарде был только «переходник»)'),
 ('Вентилятор для видеокарты Arctic',              null, 'other',    true,  'D6',         'regression', 'класс зонда A (^вентилятор)'),
 ('Видеокарта RTX 3070 Aorus, отличное охлаждение',null, 'gpu',      false, 'D6',         'regression', 'контроль: «охлаждение» в середине НЕ выталкивает живую карту'),
+-- ---- Пакет №2 (R10): чипсет-словарь категории догоняет pk_mobo + psu-гард ----
+('Блок питания Deepcool B650',                    null, 'psu',      true,  'R10',        'regression', 'модель БП с чипсето-именем — НЕ mobo (psu-гард чипсет-ветки)'),
+('ASRock B850M Pro RS',                           null, 'mobo',     false, 'R10',        'regression', 'новый AMD 800-чипсет БЕЗ слова «материнск» ([bzh][2-8][0-9]0)'),
+('ASUS TUF Gaming X870-Plus WiFi',                null, 'mobo',     false, 'R10',        'regression', 'X870 без слова «материнск» (\yx[3-8]70)'),
 -- ---- GAP: открытые дыры (ожидаемо красные; бэклог реальной выборки) -----------
 ('Накопитель Crucial MX500 500GB',                null, 'ssd',      false, 'NEW-2',      'gap', 'SSD-модель без слова ssd/nvme/evo → other; словарь моделей — из реальной выборки');
 
@@ -86,6 +90,7 @@ insert into category_golden (title, model, expected, danger, err, source, note) 
 create or replace view category_golden_eval as
 select g.*, lot_category(g.title, g.model) as predicted
 from category_golden g;
+alter view category_golden_eval set (security_invoker = on);  -- NEW-5
 
 -- 1) матрица ошибок
 select expected, predicted, count(*) n

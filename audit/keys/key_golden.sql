@@ -65,6 +65,8 @@ insert into key_golden (category, title, model, brand, expected, danger, err, so
 ('ram','Оперативная память DDR4 (объём не указан)',null,null,null,true,'R5','regression','R5 (одобрено 11.06): gen-only ключ ЗАПРЕЩЁН — бакет ddr4 смешивал 4–128 ГБ (danger)'),
 ('ram','Оперативная память 16GB для ноутбука',null,null,null,true,'R5','regression','R5: объём БЕЗ поколения — смесь DDR3/DDR5 → null (danger)'),
 ('ram','Серверная память 32GB ECC REG 2133',null,null,null,true,'R5','regression','R5: даже с частотой, но без поколения — ключа нет (danger)'),
+('ram','DDR5 32GB 7200 МГц',null,null,'ddr5-32gb-7200',false,'R3','regression','пакет №2: кириллическая частота + DDR5-скорость из расширенного allowlist'),
+('ram','Оперативная память DDR4 8GB 3200мгц',null,null,'ddr4-8gb-3200',false,'R3','regression','пакет №2: склеенная кириллическая частота'),
 -- ---- MOBO (pk_mobo(model,title)) --------------------------------------------
 ('mobo','Материнская плата ASUS Prime B450M-A','ASUS PRIME B450M-A',null,'b450',false,'baseline','regression','чипсет'),
 ('mobo','MSI Z370-A PRO LGA1151','MSI Z370-A PRO',null,'z370',false,'baseline','regression','чипсет раньше сокета'),
@@ -82,6 +84,8 @@ insert into key_golden (category, title, model, brand, expected, danger, err, so
 ('mobo','Материнская плата 880GM-E41',null,null,'880g',false,'probeC','regression','AM3 880G (в проде лежит в cpu — категорию чиним отдельно)'),
 ('mobo','Материнская плата LGA1366 X58 под Xeon',null,null,'x58',false,'probeC','regression','чипсет x58 находится раньше сокета'),
 ('mobo','Материнская плата б/у рабочая',null,null,null,false,'baseline','regression','нет чипсета/сокета → null'),
+('mobo','Материнская плата ASRock, цена 775 руб',null,null,null,true,'R4','regression','пакет №2: «775 руб» — цена, не LGA775 (danger, класс D3)'),
+('mobo','Материнская плата 775 сокет Core 2',null,null,'lga775',false,'R4','regression','пакет №2: настоящий 775 сокет остаётся'),
 -- ---- SSD (pk_ssd(title,brand)) ----------------------------------------------
 ('ssd','SSD Samsung 970 EVO 1TB NVMe',null,'Samsung','samsung-1tb-nvme',false,'baseline','regression','бренд+объём+nvme'),
 ('ssd','Kingston A400 240GB 2.5 SATA',null,'Kingston','kingston-240gb-sata',false,'baseline','regression','sata'),
@@ -122,6 +126,7 @@ select g.*,
     when 'gpu'  then pk_gpu(g.model, g.title)
   end as predicted
 from key_golden g;
+alter view key_golden_eval set (security_invoker = on);  -- NEW-5
 
 -- 1) РЕГРЕСС: несовпадения на зафиксированной истине — ДОЛЖНО быть 0
 select count(*) as regression_mismatches_MUST_BE_0
@@ -159,10 +164,12 @@ insert into component_golden (title, expected, err, note) values
 ('Комплект памяти + процессор Ryzen',                false, 'D8', 'память + второй класс = бандл'),
 ('Память + SSD 500gb комплект',                      false, 'D8', 'память + ssd = бандл'),
 ('Материнская плата ASUS + RX580',                   false, 'D7', 'GPU-бандл через плюс'),
-('Материнская плата с RX 580',                       false, 'D7', 'GPU-бандл через «с»');
+('Материнская плата с RX 580',                       false, 'D7', 'GPU-бандл через «с»'),
+('Kingston Fury 2x8GB 3200MHz (комплект)',           true,  'R8', 'пакет №2: кит без слова «память» — опознан по mhz/hyperx');
 
 create or replace view component_golden_eval as
   select g.*, lot_is_component(g.title) as predicted from component_golden g;
+alter view component_golden_eval set (security_invoker = on);  -- NEW-5
 -- ВЕРДИКТ (норма 0): select count(*) from component_golden_eval where predicted is distinct from expected;
 
 -- =============================================================================

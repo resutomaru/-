@@ -30,6 +30,15 @@ limit 40;
 -- from lots where item_category='ssd' and position_key ~ '^[0-9]'
 -- order by position_key limit 30;
 
+-- ЗОНД №4 — R7: КОЛИЧЕСТВО в лоте (цена за N штук в бакете одиночного товара — «2 x Xeon», «10 шт»).
+--   Подозреваемые среди компонентов С КЛЮЧОМ (именно они идут в медиану). Глазами: нужен ли qty-гард.
+-- select item_category, left(title,90) as title, position_key, price
+-- from lots
+-- where item_category in ('gpu','cpu','ram','mobo','ssd','psu')
+--   and position_key is not null
+--   and title ~* '(\y\d+\s*(шт|штук|pcs)\y|\yпар[аы]\y|\y[2-9]\s*[xх]\s*(xeon|проц|cpu|i[3579]|ryzen|плат|карт)|\yлот\s*\d+)'
+-- order by item_category limit 60;
+
 -- ЗОНД №3 — разброс цен ВНУТРИ намеренно-грубых бакетов (mobo-сокет, psu-ватты):
 --   гонять, когда в price_history накопится материал (датчик: bucket_readiness).
 --   p75/p25 ≥ ~2 на working-наблюдениях = бакет-каша, выносим решение заказчику.

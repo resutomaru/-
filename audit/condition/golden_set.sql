@@ -69,6 +69,11 @@ insert into condition_golden (title, descr, expected, danger, err, source, note)
 ('Видеокарта gtx 1050 2gb','Продаю видеокарту рабочую, не греется и не вылетает, тянет современные игры.','working',false,'E18','real','контроль: негация «не вылетает» НЕ должна стать dead'),
 ('Rtx 2060 super 8gb palit','Видеокарта не вскрывалась, могу заменить термопасту, если нужно. Всё работает отлично, артефактов и дефектов никаких нет, не перегревается.','working',false,'E18','real','контроль: «заменить термопасту»/«дефектов нет» остаются working');
 
+-- ---- Пакет №2 (ре-аудит 11.06): R1 rgb-гард после де-гомоглифа, R2 нормализация пробелов ----
+insert into condition_golden (title, descr, expected, danger, err, note) values
+('Видеокарта RTX 3070','Полностью рабочая, не работает RGB','working',false,'R1','де-гомоглиф b→в: гард должен видеть «rgв», иначе ложный dead'),
+('Видеокарта GTX 1660','Не  вылетает, работает стабильно','working',false,'R2','двойной пробел не должен пробивать lookbehind «не вылета»');
+
 -- =============================================================================
 -- HARNESS — calls the DEPLOYED lot_condition(title, descr)
 -- =============================================================================
@@ -76,6 +81,7 @@ insert into condition_golden (title, descr, expected, danger, err, source, note)
 create or replace view condition_golden_eval as
 select g.*, lot_condition(g.title, g.descr) as predicted
 from condition_golden g;
+alter view condition_golden_eval set (security_invoker = on);  -- NEW-5: вью не обходит гранты через API
 
 -- 1) матрица ошибок (expected x predicted)
 select expected, predicted, count(*) n

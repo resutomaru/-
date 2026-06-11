@@ -12,6 +12,9 @@
 --   («…с охлаждением» в середине не выталкивает); «системный блок» не матчится (нужен «охлажден» следом).
 --   Бандлы в cpu/mobo («Комплект Z790 + i5») НАМЕРЕННО не перекатегоризуем: гейт is_component=false
 --   уже исключает их из медианы, категория бандла вторична.
+-- v2.8 (пакет №2, R10): чипсет-словарь догоняет pk_mobo — [bzh][2-8][0-9]0 (+h-серии 2xx–7xx, +AMD
+--   800-серия b840/b850/b860/z890), x[3-8]70 (+x870); h[3-6]10 поглощён новым классом. В негатив ветки
+--   добавлен psu-гард: «Блок питания Deepcool B650/B750» — модель БП, не чипсет → psu.
 create or replace function public.lot_category(title text, model text)
  returns text language sql immutable as $$
   select case
@@ -25,8 +28,8 @@ create or replace function public.lot_category(title text, model text)
          and coalesce(title,'') !~* '(кулер|охлажд|вентилятор|радиатор|термопаст|для процессора|материнск|motherboard)' then 'cpu'
     when coalesce(title,'') ~* '(материнск|материнк|motherboard|\yмать\y)'
          and coalesce(title,'') !~* '(\yводоблок|\yсжо\y)' then 'mobo'
-    when coalesce(title,'') ~* '(\yam[345]\y|\ylga ?\d{3,4}|сокет|socket|чипсет|\y[bz][3-7][0-9]0|\yx[3-7]70|\yh[3-6]10)'
-         and coalesce(title,'') !~* '(кулер|башня|jonsbo|водоблок|\yсжо\y)' then 'mobo'
+    when coalesce(title,'') ~* '(\yam[345]\y|\ylga ?\d{3,4}|сокет|socket|чипсет|\y[bzh][2-8][0-9]0|\yx[3-8]70)'
+         and coalesce(title,'') !~* '(кулер|башня|jonsbo|водоблок|\yсжо\y|блок ?пит|\yбп\y|power supply|\d{3,4}\s*(вт|ватт|\yw\y))' then 'mobo'
     when coalesce(title,'') ~* '(оперативн|модул\w* памяти|\yозу\y|\yram\y|valueram|\yddr ?[2345]|\ydimm\y|sodimm|so-dimm|hyperx|мгц|mhz)' then 'ram'
     when coalesce(title,'') ~* '(\yssd\y|nvme|\ym\.?2\y|твердотел|((xpg|\yevo\y|\yqvo\y).*\d+\s*(gb|гб|tb|тб)|\d+\s*(gb|гб|tb|тб).*(xpg|\yevo\y|\yqvo\y)))'
          and coalesce(title,'') !~* '(внешний корпус|корпус для|\yбокс\y|карман|док[- ]?станц|enclosure|кейс для|карт\w* памяти|micro ?sd|microsd|\ysd ?xc\y|\ysdhc\y|флешк|usb[- ]?флеш|блок ?пит|\yбп\y|power supply)' then 'ssd'

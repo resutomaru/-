@@ -17,7 +17,7 @@ begin
   if s ~ '\yam5\y' then return 'am5'; end if;
   if s ~ '\yam3\y' then return 'am3'; end if;
   if s ~ '\yam2\y' then return 'am2'; end if;
-  if s ~ '\y775\y' then return 'lga775'; end if;
+  if s ~ '\y775\y(?!\s*(?:р\y|руб|₽|rub|шт))' then return 'lga775'; end if;  -- R4: «775 руб» — цена, не сокет (класс D3)
   if s ~ '\yfm2\y' then return 'fm2'; end if;
   if s ~ '\yfm1\y' then return 'fm1'; end if;
   return null;

@@ -35,10 +35,13 @@ insert into gpu_key_golden (title, model, expected, note) values
 ('Видеокарта gtx 1050 ti 4gb',                   'GeForce 1050 Ti Dual OC 4GB',                  'gtx1050ti_4g',      'v2 title-fallback: model «GeForce 1050 Ti» без GTX'),
 ('Видеокарта Intel arc b580 icraft',             'Intel Arc B580 iCraft 12GB',                   'arcb580_12g',       'v2: Intel Arc (E11)'),
 ('Комплект i5 9400f +мат.плата + RX 590',        'Core i5-9400F',                                null,                'v2: гард сборок — НЕ ключим бандл даже фолбэком'),
-('Видеокарта затычка с hdmi',                    'GeForce 210 1GB',                              null,                'намеренный safe-null: префикса нет нигде, диапазон-догадка небезопасна');
+('Видеокарта затычка с hdmi',                    'GeForce 210 1GB',                              null,                'намеренный safe-null: префикса нет нигде, диапазон-догадка небезопасна'),
+-- пакет №2 (R6): бандл-гард на PRIMARY-пути (model пуст)
+('Комплект пк: мат.плата + i5 + RX 590 8gb',     null,                                           null,                'R6: бандл с ПУСТЫМ model не ключуется и primary-путём');
 
 create or replace view gpu_key_eval as
   select g.*, pk_gpu(g.model, g.title) as predicted from gpu_key_golden g;
+alter view gpu_key_eval set (security_invoker = on);  -- NEW-5
 
 -- ВЕРДИКТ (норма: 0):
 select count(*) filter (where predicted is distinct from expected) as mismatches from gpu_key_eval;

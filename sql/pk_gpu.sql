@@ -22,6 +22,13 @@ begin
   s  := translate(lower(coalesce(nullif(model,''), title)), 'хс', 'xc');  -- model-first
   st := translate(lower(coalesce(title,'')), 'хс', 'xc');                  -- заголовок
 
+  -- R6 (11.06, пакет №2): бандл-гард и для PRIMARY-пути — при ПУСТОМ model заголовок-сборка не
+  --   ключуется (раньше гард стоял только на фолбэке; снапшот и так не пускает is_component=false —
+  --   это второй пояс защиты, RR-03/RR-04)
+  if nullif(model,'') is null
+     and st ~ '(комплект|\yв сборе\y|\yсборка\y|с процессор|\+\s*(rx|rtx|gtx|\ygt|radeon|geforce|arc|ryzen|core|i[3-9]|\d+\s*(gb|гб)))'
+  then return null; end if;
+
   -- источники базы: model-first; заголовок — фолбэк (§4.4), но НЕ для сборок (иначе зашьём бандл)
   if nullif(model,'') is not null
      and st !~ '(комплект|\yв сборе\y|\yсборка\y|с процессор|\+\s*(rx|rtx|gtx|\ygt|radeon|geforce|arc|ryzen|core|i[3-9]|\d+\s*(gb|гб)))'
