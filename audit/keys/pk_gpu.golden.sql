@@ -37,7 +37,10 @@ insert into gpu_key_golden (title, model, expected, note) values
 ('Комплект i5 9400f +мат.плата + RX 590',        'Core i5-9400F',                                null,                'v2: гард сборок — НЕ ключим бандл даже фолбэком'),
 ('Видеокарта затычка с hdmi',                    'GeForce 210 1GB',                              null,                'намеренный safe-null: префикса нет нигде, диапазон-догадка небезопасна'),
 -- пакет №2 (R6): бандл-гард на PRIMARY-пути (model пуст)
-('Комплект пк: мат.плата + i5 + RX 590 8gb',     null,                                           null,                'R6: бандл с ПУСТЫМ model не ключуется и primary-путём');
+('Комплект пк: мат.плата + i5 + RX 590 8gb',     null,                                           null,                'R6: бандл с ПУСТЫМ model не ключуется и primary-путём'),
+-- пакет №4 (зонд №1): объём ≠ номер модели
+('Видеокарта GeForce GT 512MB DDR2',             null,                                           null,                'P4: «512MB» — объём, не модель → мусор-ключ gt512 запрещён'),
+('Видеокарта GT 710 1GB',                        null,                                           'gt710_1g',          'P4-контроль: настоящий GT-номер рядом с объёмом живёт');
 
 create or replace view gpu_key_eval as
   select g.*, pk_gpu(g.model, g.title) as predicted from gpu_key_golden g;

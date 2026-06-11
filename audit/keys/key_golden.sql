@@ -165,7 +165,11 @@ insert into component_golden (title, expected, err, note) values
 ('Память + SSD 500gb комплект',                      false, 'D8', 'память + ssd = бандл'),
 ('Материнская плата ASUS + RX580',                   false, 'D7', 'GPU-бандл через плюс'),
 ('Материнская плата с RX 580',                       false, 'D7', 'GPU-бандл через «с»'),
-('Kingston Fury 2x8GB 3200MHz (комплект)',           true,  'R8', 'пакет №2: кит без слова «память» — опознан по mhz/hyperx');
+('Kingston Fury 2x8GB 3200MHz (комплект)',           true,  'R8', 'пакет №2: кит без слова «память» — опознан по mhz/hyperx'),
+('Лот процессоров 17шт',                             false, 'P4', 'опт-лот: цена за 17 штук — вне медианы'),
+('Серверная Samsung 64GB DDR4 2шт',                  false, 'P4', 'qty: «2шт» — цена за пару планок'),
+('Оперативная память DDR4 16gb 10 штук',             false, 'P4', 'qty: 10 штук'),
+('Видеокарта RTX 3060 12GB, 1 шт',                   true,  'P4', 'контроль: «1 шт» — одиночный товар, НЕ флагуем');
 
 create or replace view component_golden_eval as
   select g.*, lot_is_component(g.title) as predicted from component_golden g;

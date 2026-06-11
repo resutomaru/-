@@ -15,12 +15,16 @@
 -- v2.8 (пакет №2, R10): чипсет-словарь догоняет pk_mobo — [bzh][2-8][0-9]0 (+h-серии 2xx–7xx, +AMD
 --   800-серия b840/b850/b860/z890), x[3-8]70 (+x870); h[3-6]10 поглощён новым классом. В негатив ветки
 --   добавлен psu-гард: «Блок питания Deepcool B650/B750» — модель БП, не чипсет → psu.
+-- v2.9 (пакет №4, зонды 12.06): СЕРВЕРЫ → assembly («Сервер Dell R740xd» утекал в ssd через nvme с ценой
+--   426К; «Dell R640 2xXeon» — в cpu за 299К → отрава бакетов). Ловим: \yсервер\w{0,2}\y (НЕ «серверная»
+--   память — хвост ≤2 букв), server/poweredge/proliant/supermicro, шасси dl3[68]0 / r[67]x0.
+--   Внешние SSD/диски → other (готовый внешний накопитель ≠ внутренний SSD; «Внешний SSD HP P500»).
 create or replace function public.lot_category(title text, model text)
  returns text language sql immutable as $$
   select case
     when coalesce(title,'') ~* '(\yмыш|клавиатур|гарнитур|наушник|джойстик|геймпад|веб[- ]?камер|вебкамер|райзер|\yriser\y)' then 'other'
     when coalesce(title,'') ~* '^(радиатор|крепление|кулер|подставка|кабель|переходник|сумка|коврик|корпус|кронштейн|держател|б[эе]кплейт|рамка|наклейк|термопроклад|термопаст|охлажден|систем\w*\s+охлажден|адаптер|вентилятор)' then 'other'
-    when coalesce(title,'') ~* '(ноутбук|\yноут\y|в сборе|системн\w* блок|компьютер в сборе|моноблок)' then 'assembly'
+    when coalesce(title,'') ~* '(ноутбук|\yноут\y|в сборе|системн\w* блок|компьютер в сборе|моноблок|\yсервер\w{0,2}\y|\yserver\y|poweredge|proliant|supermicro|\ydl ?3[68]0|\yr[67][1-9]0)' then 'assembly'
     when coalesce(title,'') ~* '(водян\w*\s*охлажд|жидкостн\w*\s*охлажд|\yсжо\y|водоблок|башн\w*\s*охлажд)'
          and coalesce(title,'') !~* '(видеокарт|geforce|\yrtx|\ygtx|radeon|quadro|материнск|материнк|комплект|в сборе|\+)' then 'other'
     when coalesce(title,'') ~* '(видеокарт|geforce|\yrtx|\ygtx|radeon|\yrx ?\d{3,4}|\ygt ?\d{3,4}|quadro)' then 'gpu'
@@ -32,7 +36,7 @@ create or replace function public.lot_category(title text, model text)
          and coalesce(title,'') !~* '(кулер|башня|jonsbo|водоблок|\yсжо\y|блок ?пит|\yбп\y|power supply|\d{3,4}\s*(вт|ватт|\yw\y))' then 'mobo'
     when coalesce(title,'') ~* '(оперативн|модул\w* памяти|\yозу\y|\yram\y|valueram|\yddr ?[2345]|\ydimm\y|sodimm|so-dimm|hyperx|мгц|mhz)' then 'ram'
     when coalesce(title,'') ~* '(\yssd\y|nvme|\ym\.?2\y|твердотел|((xpg|\yevo\y|\yqvo\y).*\d+\s*(gb|гб|tb|тб)|\d+\s*(gb|гб|tb|тб).*(xpg|\yevo\y|\yqvo\y)))'
-         and coalesce(title,'') !~* '(внешний корпус|корпус для|\yбокс\y|карман|док[- ]?станц|enclosure|кейс для|карт\w* памяти|micro ?sd|microsd|\ysd ?xc\y|\ysdhc\y|флешк|usb[- ]?флеш|блок ?пит|\yбп\y|power supply)' then 'ssd'
+         and coalesce(title,'') !~* '(внешний корпус|корпус для|\yбокс\y|карман|док[- ]?станц|enclosure|кейс для|карт\w* памяти|micro ?sd|microsd|\ysd ?xc\y|\ysdhc\y|флешк|usb[- ]?флеш|блок ?пит|\yбп\y|power supply|внешн\w*\s+(ssd|диск|накопит))' then 'ssd'
     when coalesce(title,'') ~* '(блок ?пит|\yбп\y|\ypsu\y|power supply|80 ?plus|80 ?\+|\d{3,4} ?(вт|ватт))'
          and coalesce(title,'') !~* '(для монитор|для ноутбук|для роутер|для камер|для светодиод|\yадаптер|зарядн|macbook|imac|для apple|для мак\y)' then 'psu'
     when coalesce(model,'') ~* '(core ?2|core ?i[3579]|ryzen|xeon|pentium|celeron|athlon)' then 'cpu'

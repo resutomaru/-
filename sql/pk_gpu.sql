@@ -40,19 +40,20 @@ begin
     -- BASE (порядок важен: rtxa → rtx/gtx → arc → gts → gt → vega → hd → rx/radeon → r5/7/9 → p10x)
     if src ~ 'rtx\s*a\s*[0-9]{3,4}' then base := 'rtxa'||substring(src from 'rtx\s*a\s*([0-9]{3,4})'); end if;
     if base is null then
-      m := regexp_match(src, '\y(rtx|gtx)\s*([0-9]{3,4})');
+      m := regexp_match(src, '\y(rtx|gtx)\s*([0-9]{3,4})(?!\s*(?:mb|мб|gb|гб|tb|тб))');  -- P4: число+единица = объём, не модель
       if m is not null then base := m[1]||m[2]; end if;
     end if;
     if base is null then
       m := regexp_match(src, '\yarc\s*([ab])\s*([0-9]{3})');             -- NEW v2: Intel Arc (E11)
       if m is not null then base := 'arc'||m[1]||m[2]; end if;
     end if;
-    if base is null and src ~ '\ygts\s*[0-9]{3}'  then base := 'gts'||substring(src from '\ygts\s*([0-9]{3})'); end if;
-    if base is null and src ~ '\ygt\s*[0-9]{3,4}' then base := 'gt' ||substring(src from '\ygt\s*([0-9]{3,4})'); end if;
+    if base is null and src ~ '\ygts\s*[0-9]{3}(?!\s*(?:mb|мб|gb|гб))'  then base := 'gts'||substring(src from '\ygts\s*([0-9]{3})(?!\s*(?:mb|мб|gb|гб))'); end if;
+    -- P4 (зонд №1): «GT 512MB» давал мусор-ключ gt512 — объём принимался за номер модели
+    if base is null and src ~ '\ygt\s*[0-9]{3,4}(?!\s*(?:mb|мб|gb|гб))' then base := 'gt' ||substring(src from '\ygt\s*([0-9]{3,4})(?!\s*(?:mb|мб|gb|гб))'); end if;
     if base is null and src ~ 'vega\s*[0-9]{2}'   then base := 'vega'||substring(src from 'vega\s*([0-9]{2})'); end if;
-    if base is null and src ~ 'hd\s*[0-9]{4}'     then base := 'hd' ||substring(src from 'hd\s*([0-9]{4})'); end if;
+    if base is null and src ~ 'hd\s*[0-9]{4}(?!\s*(?:mb|мб|gb|гб))'     then base := 'hd' ||substring(src from 'hd\s*([0-9]{4})(?!\s*(?:mb|мб|gb|гб))'); end if;
     if base is null then
-      m := regexp_match(src, '\y(?:rx|radeon)(?:\s*rx)?\s*([0-9]{3,4})');
+      m := regexp_match(src, '\y(?:rx|radeon)(?:\s*rx)?\s*([0-9]{3,4})(?!\s*(?:mb|мб|gb|гб|tb|тб))');
       if m is not null then base := 'rx'||m[1]; end if;
     end if;
     if base is null then

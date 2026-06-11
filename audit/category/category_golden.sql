@@ -81,6 +81,11 @@ insert into category_golden (title, model, expected, danger, err, source, note) 
 ('Блок питания Deepcool B650',                    null, 'psu',      true,  'R10',        'regression', 'модель БП с чипсето-именем — НЕ mobo (psu-гард чипсет-ветки)'),
 ('ASRock B850M Pro RS',                           null, 'mobo',     false, 'R10',        'regression', 'новый AMD 800-чипсет БЕЗ слова «материнск» ([bzh][2-8][0-9]0)'),
 ('ASUS TUF Gaming X870-Plus WiFi',                null, 'mobo',     false, 'R10',        'regression', 'X870 без слова «материнск» (\yx[3-8]70)'),
+-- ---- Пакет №4 (зонды 12.06): серверы и внешние накопители ---------------------
+('Сервер Dell R740xd 24NVMe 2x6146 Gold 512GB',   null, 'assembly', true,  'P4',         'regression', 'сервер утекал в ssd через nvme — цена 426К травила бакет 512gb-nvme'),
+('Dell R640 10SFF 2x Xeon Gold 6246 256GB',       null, 'assembly', true,  'P4',         'regression', 'сервер БЕЗ слова «сервер» — шасси-паттерн r640; утекал в cpu за 299К'),
+('Внешний SSD диск 250Gb HP P500',                null, 'other',    true,  'P4',         'regression', 'внешний накопитель — другой товар, не внутренний SSD'),
+('Серверная память Samsung 64GB DDR4 ECC',        null, 'ram',      false, 'P4',         'regression', 'контроль: «серверНАЯ» память остаётся ram (хвост >2 букв не матчит сервер-гард)'),
 -- ---- GAP: открытые дыры (ожидаемо красные; бэклог реальной выборки) -----------
 ('Накопитель Crucial MX500 500GB',                null, 'ssd',      false, 'NEW-2',      'gap', 'SSD-модель без слова ssd/nvme/evo → other; словарь моделей — из реальной выборки');
 
