@@ -104,10 +104,12 @@ from category_golden_eval where source='regression' and predicted is distinct fr
 select id, err, expected, predicted, title
 from category_golden_eval where source='gap' and predicted is distinct from expected order by err;
 
--- 4) АКСЕССУАР-ПРОТЕЧКИ: danger-строки, уехавшие в компонент (не other/assembly)
+-- 4) ОШИБКИ НА DANGER-СТРОКАХ: любые несовпадения опасного класса
+--    (с пакета №2 danger ≠ «истина всегда other»: «Блок питания B650» — danger с истиной psu,
+--    поэтому формула «predicted not in (other,assembly)» давала ложную тревогу на ВЕРНОМ ответе)
 select id, expected, predicted, title
 from category_golden_eval
-where danger and predicted not in ('other','assembly') order by predicted;
+where danger and predicted is distinct from expected order by predicted;
 
 -- =============================================================================
 -- ВЫБОРКА для ручной разметки (добавляй строки с source='real').

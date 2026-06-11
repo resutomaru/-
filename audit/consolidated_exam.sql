@@ -38,8 +38,8 @@ from (
   select 40, 'category', 'регресс на зафиксированной истине (без gap)',
          (select count(*) from category_golden_eval where source='regression' and predicted is distinct from expected), '0'
   union all
-  select 41, 'category', 'danger-аксессуары, утёкшие в компонент',
-         (select count(*) from category_golden_eval where danger and predicted not in ('other','assembly')), '0'
+  select 41, 'category', 'ошибки на danger-кейсах (аксессуар→компонент и др.)',
+         (select count(*) from category_golden_eval where danger and predicted is distinct from expected), '0'
   -- 5) ДЕТЕКТОР СБОРОК
   union all
   select 50, 'is_component', 'несовпадения (D7/D8)',
