@@ -68,7 +68,10 @@ insert into key_golden (category, title, model, brand, expected, danger, err, so
 ('mobo','Материнская плата X99 Huananzhi LGA2011',null,null,'x99',false,'baseline','regression','серверный чипсет x99'),
 ('mobo','Материнская плата ASRock A58M-K','ASRock A58M-K',null,'a58',false,'probeC','regression','FM2+ чипсет A58'),
 ('mobo','MSI 990FXA-GD65','MSI 990FXA-GD65',null,'990fx',false,'probeC','regression','AM3+ 990FX (990fx, не 990x)'),
-('mobo','Intel D945GCNL',null,null,'945',false,'probeC','regression','старый Intel 945'),
+('mobo','Intel D945GCNL',null,null,null,false,'D1','regression','D1: голые числа-чипсеты убраны — ретро в осознанный null (яд опаснее ключа, RR-03)'),
+('mobo','Материнская плата для i7-9700K, разгон',null,null,null,true,'D1','regression','D1: «970» НЕ должен выскочить из i7-9700K (danger)'),
+('mobo','Материнская плата ASRock с RX580',null,null,null,true,'D1','regression','D1: «x58» НЕ должен выскочить из RX580 (danger)'),
+('mobo','Материнская плата Gigabyte GA-X58A-UD3R',null,null,'x58',false,'D1','regression','x58 с буквой после — валиден (гард только на цифру)'),
 ('mobo','Материнская плата 880GM-E41',null,null,'880g',false,'probeC','regression','AM3 880G (в проде лежит в cpu — категорию чиним отдельно)'),
 ('mobo','Материнская плата LGA1366 X58 под Xeon',null,null,'x58',false,'probeC','regression','чипсет x58 находится раньше сокета'),
 ('mobo','Материнская плата б/у рабочая',null,null,null,false,'baseline','regression','нет чипсета/сокета → null'),
@@ -85,6 +88,7 @@ insert into key_golden (category, title, model, brand, expected, danger, err, so
 ('ssd','Crucial MX500',null,'Crucial',null,true,'probeC','regression','НЕ путать модель MX500 с объёмом 500 (danger)'),
 ('ssd','Samsung 970 EVO 250GB',null,'Samsung','samsung-250gb',false,'probeC','regression','970=модель, объём=250 (контроль)'),
 ('ssd','SSD U.2 3,84TB Samsung PM963',null,'Samsung','samsung-3840gb',false,'decimal-tb','gap','дробные ТБ пока не парсим (редкий enterprise)'),
+('ssd','SSD Kingston за 500р',null,'Kingston',null,true,'D3','regression','D3: цена в заголовке НЕ объём (danger)'),
 -- ---- PSU (coalesce(pk_psu(model),pk_psu(title))) ----------------------------
 ('psu','Блок питания Corsair RM650 650W 80+ Gold',null,null,'650w',false,'baseline','regression','явная мощность'),
 ('psu','БП DeepCool PK500D 500 Вт ATX',null,null,'500w',false,'baseline','regression','кирилл. «вт»'),
@@ -94,6 +98,7 @@ insert into key_golden (category, title, model, brand, expected, danger, err, so
 ('psu','Блок питания 500W 140x150x86 мм',null,null,'500w',false,'baseline','regression','явная мощность важнее размеров (AxB-гард)'),
 ('psu','Блок питания Corsair HX1200',null,null,'1200w',false,'probeC','regression','мощность из модели HX1200 (гард x чинён)'),
 ('psu','Вентилятор для БП 120x120x25мм',null,null,null,true,'probeC','regression','размеры AxB НЕ мощность (danger)'),
+('psu','Блок питания б/у 350р',null,null,null,true,'D3','regression','D3: цена НЕ мощность, даже кратная 50 (danger)'),
 ('psu','Блок питания ATX, мощность не указана',null,null,null,false,'baseline','regression','нет мощности → null');
 
 -- =============================================================================

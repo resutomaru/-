@@ -5,6 +5,8 @@
 -- v2.5 (2026-06-11): RTX/GTX через \yrtx/\ygtx (граница слева) — ловит и «RTX3060» склеенный, и «RTX Pro
 --   6000»/«RTX A6000»/«GTX Titan» с инфиксом (превью поймал регресс от слишком узкого \yrtx ?\d).
 --   Явное «материнск» → mobo даже при упоминании кулера (был over-exclude «мать + кулер»→other). Зонд B.
+-- v2.6 (самоаудит D5): явной mobo-ветке возвращён УЗКИЙ гард водоблок/СЖО («Водоблок … материнской
+--   платы» — аксессуар, не плата). «кулер» в гард НЕ возвращаем — это был over-exclude (зонд B).
 create or replace function public.lot_category(title text, model text)
  returns text language sql immutable as $$
   select case
@@ -16,7 +18,8 @@ create or replace function public.lot_category(title text, model text)
     when coalesce(title,'') ~* '(видеокарт|geforce|\yrtx|\ygtx|radeon|\yrx ?\d{3,4}|\ygt ?\d{3,4}|quadro)' then 'gpu'
     when coalesce(title,'') ~* '(процессор|\ycpu\y|ryzen|core ?i[3579]|core ?2|core ?ultra|\yi[3579][ -]?\d{3,5}|xeon|pentium|celeron|\yathlon\y)'
          and coalesce(title,'') !~* '(кулер|охлажд|вентилятор|радиатор|термопаст|для процессора|материнск|motherboard)' then 'cpu'
-    when coalesce(title,'') ~* '(материнск|материнк|motherboard|\yмать\y)' then 'mobo'
+    when coalesce(title,'') ~* '(материнск|материнк|motherboard|\yмать\y)'
+         and coalesce(title,'') !~* '(\yводоблок|\yсжо\y)' then 'mobo'
     when coalesce(title,'') ~* '(\yam[345]\y|\ylga ?\d{3,4}|сокет|socket|чипсет|\y[bz][3-7][0-9]0|\yx[3-7]70|\yh[3-6]10)'
          and coalesce(title,'') !~* '(кулер|башня|jonsbo|водоблок|\yсжо\y)' then 'mobo'
     when coalesce(title,'') ~* '(оперативн|модул\w* памяти|\yозу\y|\yram\y|valueram|\yddr ?[2345]|\ydimm\y|sodimm|so-dimm|hyperx|мгц|mhz)' then 'ram'

@@ -15,6 +15,10 @@
 
 create unique index if not exists ph_lot_uidx on price_history (lot_id);
 
+-- v2 (самоаудит D4): история САМОЛЕЧИТСЯ. do nothing → do update (ключ/категория/состояние всегда =
+--   текущей разметке lots; price/observed_at НЕ трогаем — семантика первого наблюдения). Плюс
+--   самочистка: лот выпал из компонентов / стал сборкой / потерял ключ → его строка истории уходит.
+--   Ручные синки/чистки после фиксов словарей больше не нужны.
 create or replace function public.snapshot_price_history() returns void language plpgsql as $$
 begin
   insert into price_history (lot_id, position_key, item_category, price, condition, observed_at, region)
@@ -27,7 +31,19 @@ begin
     and l.price is not null
     and l.position_key is not null
     and l.is_component is distinct from false
-  on conflict (lot_id) do nothing;
+  on conflict (lot_id) do update
+    set position_key  = excluded.position_key,
+        item_category = excluded.item_category,
+        condition     = excluded.condition,
+        region        = excluded.region
+    where (price_history.position_key, price_history.item_category, price_history.condition)
+          is distinct from (excluded.position_key, excluded.item_category, excluded.condition);
+
+  delete from price_history ph using lots l
+   where ph.lot_id = l.id
+     and (l.item_category not in ('gpu','cpu','ram','mobo','ssd','psu')
+          or l.is_component = false
+          or l.position_key is null);
 end $$;
 
 -- расписание (pg_cron). Требует: create extension if not exists pg_cron;

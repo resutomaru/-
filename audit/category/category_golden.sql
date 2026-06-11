@@ -70,6 +70,7 @@ insert into category_golden (title, model, expected, danger, err, source, note) 
 ('На доставку материнская плата и кулер',         null, 'mobo',     false, 'probeB',     'regression', 'реальная плата + упоминание кулера → mobo (не other)'),
 ('Pny RTX Pro 6000 Blackwell workstation edition',null, 'gpu',      false, 'probeB',     'regression', 'pro-карта RTX Pro 6000 (инфикс) → gpu, НЕ other'),
 ('Nvidia RTX A6000 48GB',                         null, 'gpu',      false, 'probeB',     'regression', 'RTX A-серия (инфикс A) → gpu'),
+('Водоблок для материнской платы VRM',            null, 'other',    true,  'D5',         'regression', 'D5: водоблок мат.платы — аксессуар, НЕ mobo (v2.6 гард)'),
 -- ---- GAP: открытые дыры (ожидаемо красные; бэклог реальной выборки) -----------
 ('Накопитель Crucial MX500 500GB',                null, 'ssd',      false, 'NEW-2',      'gap', 'SSD-модель без слова ssd/nvme/evo → other; словарь моделей — из реальной выборки');
 

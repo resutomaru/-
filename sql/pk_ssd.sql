@@ -28,8 +28,8 @@ begin
     m := regexp_match(s,'(\d+)\s*(?:gb|гб|g\y|г\y)');                       -- +голая g/г: «1000G» (probe C)
     if m is not null and m[1]::int between 8 and 16384 then cap := m[1]||'gb'; end if;
   end if;
-  if cap is null then                                                       -- голый объём ИЗ allowlist: «SSD 480», но НЕ модель «MX500»/скорость «500 МБ/с»
-    m := regexp_match(s,'(?:^|[^[:alnum:]])(120|128|240|250|256|480|500|512|960|1000|1024|2000|2048|4000)(?![0-9])(?!\s*(?:мб|mb))');
+  if cap is null then                                                       -- голый объём ИЗ allowlist: «SSD 480», но НЕ модель «MX500»/скорость «500 МБ/с»/цена «500р» (D3)
+    m := regexp_match(s,'(?:^|[^[:alnum:]])(120|128|240|250|256|480|500|512|960|1000|1024|2000|2048|4000)(?![0-9])(?!\s*(?:мб|mb|р\y|руб|₽|rub|шт))');
     if m is not null then cap := m[1]||'gb'; end if;
   end if;
   if s ~ 'nvme|m\.?2' then iface:='nvme'; elsif s ~ 'sata|2\.5' then iface:='sata'; end if;
