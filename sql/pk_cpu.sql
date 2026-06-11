@@ -19,8 +19,8 @@ begin
     if m is not null then return 'xeon-'||m[1]||'-'||m[2]; end if;
   m := regexp_match(s,'xeon\s*([ewl][357])[\s-]*([0-9]{4})\s*v?\s*([0-9])?');              -- E/W/L-серия
     if m is not null then return 'xeon-'||m[1]||'-'||m[2]||case when m[3] is not null then 'v'||m[3] else '' end; end if;
-  m := regexp_match(s,'xeon\s*([a-z])?\s*([0-9]{4})');                                      -- X-серия / голый номер (probe C)
-    if m is not null then return 'xeon-'||coalesce(m[1],'')||m[2]; end if;
+  m := regexp_match(s,'xeon\s*([a-z])?\s*([0-9]{4})\s*v?\s*([0-9])?');                      -- X-серия / голый номер (probe C); v-суффикс ОБЯЗАТЕЛЕН (самоаудит D2: поколения v1/v2/v3 не смешивать)
+    if m is not null then return 'xeon-'||coalesce(m[1],'')||m[2]||case when m[3] is not null then 'v'||m[3] else '' end; end if;
   m := regexp_match(s,'pentium\s*(?:gold|silver)?\s*([a-z]?[0-9]{3,4})'); if m is not null then return 'pentium-'||m[1]; end if;  -- gold/silver-инфикс (key_golden gap)
   m := regexp_match(s,'celeron\s*([a-z]?[0-9]{3,4})'); if m is not null then return 'celeron-'||m[1]; end if;
   m := regexp_match(s,'athlon\s*([a-z0-9]+)');         if m is not null then return 'athlon-'||m[1]; end if;

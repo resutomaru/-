@@ -45,6 +45,7 @@ insert into key_golden (category, title, model, brand, expected, danger, err, so
 ('cpu','AMD Ryzen 5 PRO 4650G',null,null,'ryzen5-4650g',false,'probeC','regression','PRO-инфикс (как Pentium Gold)'),
 ('cpu','Xeon X3460 4 ядра LGA1156',null,null,'xeon-x3460',false,'probeC','regression','Xeon X-серия'),
 ('cpu','Xeon Platinum 8358P 32 ядра',null,null,'xeon-platinum-8358',false,'probeC','regression','Scalable platinum (суффикс p отброшен)'),
+('cpu','Процессор Xeon 2680 v2 LGA2011',null,null,'xeon-2680v2',true,'D2','regression','самоаудит D2: v-суффикс у голого Xeon — без него поколения сливаются в один бакет (danger)'),
 ('cpu','Процессор для игрового ПК, недорого',null,null,null,false,'baseline','regression','нет модели → null'),
 ('cpu','Intel Pentium Gold G7400',null,null,'pentium-g7400',false,'NEW-2','regression','закрыто 11.06: pentium допускает инфикс gold/silver'),
 -- ---- RAM (model обычно пуст → парсим заголовок) ------------------------------
