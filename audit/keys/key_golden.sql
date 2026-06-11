@@ -43,7 +43,7 @@ insert into key_golden (category, title, model, brand, expected, danger, err, so
 ('cpu','Intel Core Ultra 7 265K',null,null,'ultra7-265k',false,'baseline','regression','core ultra (новое поколение)'),
 ('cpu','Процессор Intel Xeon Gold 6248',null,null,null,false,'E11','regression','Scalable намеренно null (safe), низкий приоритет'),
 ('cpu','Процессор для игрового ПК, недорого',null,null,null,false,'baseline','regression','нет модели → null'),
-('cpu','Intel Pentium Gold G7400',null,null,'pentium-g7400',false,'NEW-2','gap','«Gold» между pentium и номером ломает парс → сейчас null'),
+('cpu','Intel Pentium Gold G7400',null,null,'pentium-g7400',false,'NEW-2','regression','закрыто 11.06: pentium допускает инфикс gold/silver'),
 -- ---- RAM (model обычно пуст → парсим заголовок) ------------------------------
 ('ram','Оперативная память DDR4 16GB 3200MHz',null,null,'ddr4-16gb-3200',false,'baseline','regression','одиночный модуль'),
 ('ram','Kingston Fury Beast DDR5 32GB 6000',null,null,'ddr5-32gb-6000',false,'baseline','regression','ddr5'),
