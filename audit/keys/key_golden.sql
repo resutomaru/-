@@ -133,6 +133,32 @@ select id, category, err, source, expected, predicted, title
 from key_golden_eval where predicted is distinct from expected order by source, category;
 
 -- =============================================================================
+-- COMPONENT_GOLDEN — мини-сеть детектора сборок lot_is_component (D7/D8; RR-12: у этого мозга сети не было).
+-- true = одиночный товар (идёт в медиану), false = бандл/сборка (исключается).
+-- =============================================================================
+create table if not exists component_golden (
+  id bigserial primary key, title text, expected boolean not null,
+  err text, source text not null default 'regression', note text
+);
+delete from component_golden where source = 'regression';
+insert into component_golden (title, expected, err, note) values
+('Видеокарта RTX 3070 8GB',                          true,  'baseline', 'одиночный товар'),
+('Компьютер в сборе i5 / RTX 3060',                  false, 'baseline', 'сборка'),
+('Комплект i5 9400f +мат.плата + RX 590',            false, 'baseline', 'бандл'),
+('Оперативная память DDR4 2x8GB 3200 (комплект)',    true,  'D8', 'RAM-кит — товар, тотал считает pk_ram (E7)'),
+('Комплект памяти Kingston Fury 2x16GB',             true,  'D8', 'кит со словом «комплект» впереди'),
+('Память DDR3 2+2 Гб',                               true,  'D8', 'кит через плюс — не бандл'),
+('Видеокарта RTX 3070, полный комплект (коробка)',   true,  'D8', '«полный комплект» = коробка/документы'),
+('Комплект памяти + процессор Ryzen',                false, 'D8', 'память + второй класс = бандл'),
+('Память + SSD 500gb комплект',                      false, 'D8', 'память + ssd = бандл'),
+('Материнская плата ASUS + RX580',                   false, 'D7', 'GPU-бандл через плюс'),
+('Материнская плата с RX 580',                       false, 'D7', 'GPU-бандл через «с»');
+
+create or replace view component_golden_eval as
+  select g.*, lot_is_component(g.title) as predicted from component_golden g;
+-- ВЕРДИКТ (норма 0): select count(*) from component_golden_eval where predicted is distinct from expected;
+
+-- =============================================================================
 -- ВЫБОРКА для ручной разметки (добавляй строки с source='real'):
 -- select item_category category, left(title,90) title, model, brand, position_key as now_key
 -- from lots where item_category in ('cpu','ram','mobo','ssd','psu')
