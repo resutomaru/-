@@ -2,8 +2,9 @@
 -- АУДИТ 2026-06-10: обёрнут в функцию для авто-нормализатора (pg_cron).
 -- v2.4 (2026-06-11): +^-гард аксессуаров (кронштейн/держатель/бэкплейт/рамка/наклейка/термопрокладки/
 --   термопаст) — закрывает NEW-1-протечки аксессуар→компонент (найдены category_golden). База — v2.3.
--- v2.5 (2026-06-11): склеенный RTX/GTX («RTX3060» без пробела) → gpu; явное «материнск» → mobo даже при
---   упоминании кулера (был over-exclude «мать + кулер»→other). Найдено зондом B. ПЕРЕД ДЕПЛОЕМ — превью-дифф.
+-- v2.5 (2026-06-11): RTX/GTX через \yrtx/\ygtx (граница слева) — ловит и «RTX3060» склеенный, и «RTX Pro
+--   6000»/«RTX A6000»/«GTX Titan» с инфиксом (превью поймал регресс от слишком узкого \yrtx ?\d).
+--   Явное «материнск» → mobo даже при упоминании кулера (был over-exclude «мать + кулер»→other). Зонд B.
 create or replace function public.lot_category(title text, model text)
  returns text language sql immutable as $$
   select case
@@ -11,8 +12,8 @@ create or replace function public.lot_category(title text, model text)
     when coalesce(title,'') ~* '^(радиатор|крепление|кулер|подставка|кабель|переходник|сумка|коврик|корпус|кронштейн|держател|б[эе]кплейт|рамка|наклейк|термопроклад|термопаст)' then 'other'
     when coalesce(title,'') ~* '(ноутбук|\yноут\y|в сборе|системн\w* блок|компьютер в сборе|моноблок)' then 'assembly'
     when coalesce(title,'') ~* '(водян\w*\s*охлажд|жидкостн\w*\s*охлажд|\yсжо\y|водоблок|башн\w*\s*охлажд)'
-         and coalesce(title,'') !~* '(видеокарт|geforce|\yrtx ?\d|\ygtx ?\d|radeon|quadro|материнск|материнк|комплект|в сборе|\+)' then 'other'
-    when coalesce(title,'') ~* '(видеокарт|geforce|\yrtx ?\d|\ygtx ?\d|radeon|\yrx ?\d{3,4}|\ygt ?\d{3,4}|quadro)' then 'gpu'
+         and coalesce(title,'') !~* '(видеокарт|geforce|\yrtx|\ygtx|radeon|quadro|материнск|материнк|комплект|в сборе|\+)' then 'other'
+    when coalesce(title,'') ~* '(видеокарт|geforce|\yrtx|\ygtx|radeon|\yrx ?\d{3,4}|\ygt ?\d{3,4}|quadro)' then 'gpu'
     when coalesce(title,'') ~* '(процессор|\ycpu\y|ryzen|core ?i[3579]|core ?2|core ?ultra|\yi[3579][ -]?\d{3,5}|xeon|pentium|celeron|\yathlon\y)'
          and coalesce(title,'') !~* '(кулер|охлажд|вентилятор|радиатор|термопаст|для процессора|материнск|motherboard)' then 'cpu'
     when coalesce(title,'') ~* '(материнск|материнк|motherboard|\yмать\y)' then 'mobo'

@@ -68,6 +68,8 @@ insert into category_golden (title, model, expected, danger, err, source, note) 
 -- ---- ЗАКРЫТО v2.5: recall по зонду B -----------------------------------------
 ('Как новая RTX3060 12GB gddr6 LHR',              null, 'gpu',      false, 'probeB',     'regression', 'склеенный rtx3060 без пробела → gpu'),
 ('На доставку материнская плата и кулер',         null, 'mobo',     false, 'probeB',     'regression', 'реальная плата + упоминание кулера → mobo (не other)'),
+('Pny RTX Pro 6000 Blackwell workstation edition',null, 'gpu',      false, 'probeB',     'regression', 'pro-карта RTX Pro 6000 (инфикс) → gpu, НЕ other'),
+('Nvidia RTX A6000 48GB',                         null, 'gpu',      false, 'probeB',     'regression', 'RTX A-серия (инфикс A) → gpu'),
 -- ---- GAP: открытые дыры (ожидаемо красные; бэклог реальной выборки) -----------
 ('Накопитель Crucial MX500 500GB',                null, 'ssd',      false, 'NEW-2',      'gap', 'SSD-модель без слова ssd/nvme/evo → other; словарь моделей — из реальной выборки');
 
