@@ -86,6 +86,8 @@ insert into key_golden (category, title, model, brand, expected, danger, err, so
 ('psu','Блок питания DEEPCOOL PK650D',null,null,'650w',false,'bar-number','regression','мощность из модели (фолбэк бар-числа)'),
 ('psu','Блок питания 12V 333W индустриальный',null,null,null,false,'guard-%50','regression','333 не кратно 50 → null (анти-мусор)'),
 ('psu','Блок питания 500W 140x150x86 мм',null,null,'500w',false,'baseline','regression','явная мощность важнее размеров (AxB-гард)'),
+('psu','Блок питания Corsair HX1200',null,null,'1200w',false,'probeC','regression','мощность из модели HX1200 (гард x чинён)'),
+('psu','Вентилятор для БП 120x120x25мм',null,null,null,true,'probeC','regression','размеры AxB НЕ мощность (danger)'),
 ('psu','Блок питания ATX, мощность не указана',null,null,null,false,'baseline','regression','нет мощности → null');
 
 -- =============================================================================

@@ -6,8 +6,9 @@ declare s text; w int; m text[];
 begin
   if raw is null then return null; end if;
   s := translate(lower(raw),'хс','xc');
+  s := regexp_replace(s,'\d+\s*x\s*\d+(\s*x\s*\d+)?',' ','g');       -- вырезать размеры AxB(xC) — не путать с мощностью
   m := regexp_match(s,'(\d{3,4})\s*(?:вт|ватт|w)');                 -- явная мощность
-  if m is null then m := regexp_match(s,'(?:^|[^0-9x])(\d{3,4})(?![0-9x])'); end if;  -- бар-число, не часть AxB
+  if m is null then m := regexp_match(s,'(?:^|[^0-9])(\d{3,4})(?![0-9])'); end if;  -- бар-число (модель HX1200/RM650)
   if m is null then return null; end if;
   w := m[1]::int;
   if w < 200 or w > 1600 or w % 50 <> 0 then return null; end if;
