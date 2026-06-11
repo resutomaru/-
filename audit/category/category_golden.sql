@@ -71,6 +71,12 @@ insert into category_golden (title, model, expected, danger, err, source, note) 
 ('Pny RTX Pro 6000 Blackwell workstation edition',null, 'gpu',      false, 'probeB',     'regression', 'pro-карта RTX Pro 6000 (инфикс) → gpu, НЕ other'),
 ('Nvidia RTX A6000 48GB',                         null, 'gpu',      false, 'probeB',     'regression', 'RTX A-серия (инфикс A) → gpu'),
 ('Водоблок для материнской платы VRM',            null, 'other',    true,  'D5',         'regression', 'D5: водоблок мат.платы — аксессуар, НЕ mobo (v2.6 гард)'),
+-- ---- ЗАКРЫТО v2.7: зонд A (аксессуары в компонентах) ---------------------------
+('Система охлаждения Gigabyte Aorus RTX 3070 Ti', null, 'other',    true,  'D6',         'regression', 'зонд A: кулер карты целиком — НЕ gpu (^систем охлажден)'),
+('Охлаждение для оперативной памяти',             null, 'other',    true,  'D6',         'regression', 'зонд A: радиатор RAM (^охлажден)'),
+('Адаптер M.2 NVMe — Oculink SFF-8611',           null, 'other',    true,  'D6',         'regression', 'зонд A: адаптер (^адаптер; в ssd-гарде был только «переходник»)'),
+('Вентилятор для видеокарты Arctic',              null, 'other',    true,  'D6',         'regression', 'класс зонда A (^вентилятор)'),
+('Видеокарта RTX 3070 Aorus, отличное охлаждение',null, 'gpu',      false, 'D6',         'regression', 'контроль: «охлаждение» в середине НЕ выталкивает живую карту'),
 -- ---- GAP: открытые дыры (ожидаемо красные; бэклог реальной выборки) -----------
 ('Накопитель Crucial MX500 500GB',                null, 'ssd',      false, 'NEW-2',      'gap', 'SSD-модель без слова ssd/nvme/evo → other; словарь моделей — из реальной выборки');
 
