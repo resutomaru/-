@@ -83,14 +83,24 @@ from (
   select 93, 'инфо', 'компонентов без position_key (NEW-3-остаток: словарные нули)',
          (select count(*) from lots
            where item_category in ('gpu','cpu','ram','mobo','ssd','psu') and position_key is null), 'ℹ'
+  -- 9) WEAK KEYS (R5-пакет, одобрен 11.06; реестр: audit/keys/weak_keys.md).
+  --    ПОСЛЕ деплоя пакета все четыре = 0. ДО деплоя ожидаемо >0 (фиксы лежат в git) —
+  --    это маркер «пакет ещё не раскатан», не тревога.
   union all
-  select 94, 'инфо', 'gen-only ram-ключи в lots (R5: ddr* без объёма — кандидат в null)',
+  select 80, 'weak-keys', 'ram gen-only в lots (''ddr4'' без объёма; 0 после деплоя R5)',
          (select count(*) from lots where item_category='ram'
-           and position_key in ('ddr2','ddr3','ddr3l','ddr4','ddr5')), 'ℹ'
+           and position_key in ('ddr2','ddr3','ddr3l','ddr4','ddr5')), '0'
   union all
-  select 95, 'инфо', 'gen-only ram-ключи уже в price_history (R5: будущий бакет-яд)',
+  select 81, 'weak-keys', 'ram gen-only в price_history (0 после деплоя R5 — самочистка D4)',
          (select count(*) from price_history
-           where position_key in ('ddr2','ddr3','ddr3l','ddr4','ddr5')), 'ℹ'
+           where position_key in ('ddr2','ddr3','ddr3l','ddr4','ddr5')), '0'
+  union all
+  select 82, 'weak-keys', 'ram объём-без-поколения (''16gb…''; 0 после деплоя R5)',
+         (select count(*) from lots where item_category='ram' and position_key ~ '^[0-9]+gb'), '0'
+  union all
+  select 83, 'weak-keys', 'cpu athlon-семейства без номера модели (0 после деплоя R5)',
+         (select count(*) from lots where item_category='cpu'
+           and position_key ~ '^athlon-(64|ii|pro|x[0-9]|xp)$'), '0'
 ) t
 order by ord;
 

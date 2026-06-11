@@ -5,6 +5,14 @@
 --   E7: кит N×M считаем РАНЬШЕ одиночного «(\d+)gb» и берём как валидный тотал
 --       («2x32gb»→64, «2x4gb»→8). Одиночный gb — фолбэк, если кита нет или кит дал невалид.
 --   E8: allowlist объёмов расширен под DDR5 (24/48/96) и тоталы китов (48/64/96/128/192/256).
+--   R5 (2026-06-11, ОДОБРЕНО Алексеем): слабые ключи запрещены — gen И cap ОБЯЗАТЕЛЬНЫ.
+--     Было: 'ddr4' (без объёма, смесь 4–128 ГБ) и '16gb' (без поколения, смесь DDR3/DDR5) шли
+--     в price_history и зрели в ядовитые бакеты медианы. Теперь обе формы → null («не уверен — молчим»).
+--   ДЕПЛОЙ R5-ПАКЕТА (после гейта №1 — дословного prosrc-диффа): CREATE OR REPLACE pk_ram + pk_cpu →
+--     пересев audit/keys/key_golden.sql → полный ре-ключ:
+--       update lots set position_key = null where item_category in ('ram','cpu');
+--       select public.normalize_new_lots();
+--     (история самосинхронизируется/самочистится снапшотом, D4) → consolidated_exam: weak-keys 80–83 = 0.
 -- НЕ деплоено приёмником. Перед CREATE OR REPLACE сверить с живой версией (pk_ram live==git
 --   подтверждён по поведению, дословно — нет; см. audit/reaudit-2026-06-08.md).
 create or replace function public.pk_ram(raw text)
@@ -35,7 +43,8 @@ begin
   spd := coalesce( (regexp_match(s,'(\d{3,4})\s*mhz'))[1],
                    (regexp_match(s,'\y(1066|1333|1600|1866|2133|2400|2666|2800|2933|3000|3200|3333|3466|3600|3733|4000|4266|4800|5200|5600|6000|6400)\y'))[1] );
   if s ~ 'so[\s-]?dimm' then so:='so'; end if;
-  if cap is null and gen is null then return null; end if;
+  -- R5: и поколение, и объём обязательны — иначе бакет смешивает разноценовые товары (яд медианы)
+  if cap is null or gen is null then return null; end if;
   if gen is not null then parts:=parts||gen; end if;
   if cap is not null then parts:=parts||(cap||'gb'); end if;
   if spd is not null then parts:=parts||spd; end if;
