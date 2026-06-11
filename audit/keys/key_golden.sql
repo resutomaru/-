@@ -65,6 +65,11 @@ insert into key_golden (category, title, model, brand, expected, danger, err, so
 ('mobo','Материнская плата AM4 micro-ATX',null,null,'am4',false,'baseline','regression','сокет-фолбэк (нет чипсета)'),
 ('mobo','Материнская плата LGA1700 DDR5 ATX',null,null,'lga1700',false,'baseline','regression','lga-фолбэк'),
 ('mobo','Материнская плата X99 Huananzhi LGA2011',null,null,'x99',false,'baseline','regression','серверный чипсет x99'),
+('mobo','Материнская плата ASRock A58M-K','ASRock A58M-K',null,'a58',false,'probeC','regression','FM2+ чипсет A58'),
+('mobo','MSI 990FXA-GD65','MSI 990FXA-GD65',null,'990fx',false,'probeC','regression','AM3+ 990FX (990fx, не 990x)'),
+('mobo','Intel D945GCNL',null,null,'945',false,'probeC','regression','старый Intel 945'),
+('mobo','Материнская плата 880GM-E41',null,null,'880g',false,'probeC','regression','AM3 880G (в проде лежит в cpu — категорию чиним отдельно)'),
+('mobo','Материнская плата LGA1366 X58 под Xeon',null,null,'x58',false,'probeC','regression','чипсет x58 находится раньше сокета'),
 ('mobo','Материнская плата б/у рабочая',null,null,null,false,'baseline','regression','нет чипсета/сокета → null'),
 -- ---- SSD (pk_ssd(title,brand)) ----------------------------------------------
 ('ssd','SSD Samsung 970 EVO 1TB NVMe',null,'Samsung','samsung-1tb-nvme',false,'baseline','regression','бренд+объём+nvme'),
