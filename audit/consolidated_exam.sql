@@ -6,7 +6,8 @@
 --   весь вердикт = ОДИН select (union-таблица). Только чтение, данных не меняет.
 -- ПРЕДУСЛОВИЕ: засеяны сети и созданы eval-вью (файлы: audit/condition/golden_set.sql,
 --   audit/keys/pk_gpu.golden.sql, audit/keys/key_golden.sql, audit/category/category_golden.sql).
---   Если какой-то вью нет — сначала прогнать соответствующий файл сети.
+--   Если какой-то вью нет — сначала прогнать соответствующий файл сети. С Ф6 добавлена шестая сеть:
+--   audit/score/score_golden.sql (строки 55/56 экзамена упадут с ошибкой, пока она не засеяна).
 -- НОРМА: у всех строк с norm='0' observed = 0 (verdict ✓). 'ℹ' — справочные счётчики
 --   (gap-бэклог ожидаемо 2: MX500-словарь, дробные ТБ — осознанный бэклог).
 -- =============================================================================
@@ -44,6 +45,13 @@ from (
   union all
   select 50, 'is_component', 'несовпадения (D7/D8)',
          (select count(*) from component_golden_eval where predicted is distinct from expected), '0'
+  -- 5b) СКОРИНГ Ф6 (балл + светофор; red-обязанность RR-06)
+  union all
+  select 55, 'score', 'несовпадения балла (Ф6, веса клиента)',
+         (select count(*) from score_golden_eval where predicted_score is distinct from expected_score), '0'
+  union all
+  select 56, 'score', 'несовпадения светофора (вкл. red-обязан: >70%, фото≤1, пустое описание)',
+         (select count(*) from score_golden_eval where predicted_trust is distinct from expected_trust), '0'
   -- 6) ИНВАРИАНТЫ ИСТОРИИ ЦЕН (самосинк D4 обязан держать нули)
   union all
   select 60, 'history', 'рассинхрон с lots (ключ/категория/condition)',

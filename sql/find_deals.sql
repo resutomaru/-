@@ -12,6 +12,8 @@
 --     (+min_score из конфига клиента). Дефолты захардкожены до Ф8 (конфиг из client_configs/Sheets).
 -- Сейчас medians пуста → view пуст. Оживает сам по мере созревания бакетов (bucket_readiness).
 -- Глазной тест E19 (когда появятся строки): смотреть title↔position_key↔median — не перепутан ли вариант.
+-- v2: балл/светофор вынесены в функции lot_score / lot_trust (sql/lot_score.sql) — там канон правил;
+--   эта view — тонкая обёртка. Сеть на скоринг: audit/score/score_golden.sql.
 
 create or replace view public.deal_preview as
 with base as (
@@ -33,23 +35,10 @@ select b.id, b.title, b.url, b.price, b.median_price, b.sample_size, b.basis,
        round(100 * b.discount)::int as скидка_проц,
        b.item_category, b.position_key, b.condition, b.region, b.city,
        b.posted_at, b.n_photos,
-       case
-         when b.discount > 0.70 then 'red'
-         when b.n_photos <= 1 then 'red'
-         when length(coalesce(b.description,'')) < 40 then 'red'
-         when b.condition = 'unknown' then 'yellow'
-         when b.n_photos <= 3 then 'yellow'
-         else 'green'
-       end as trust,
-       round(least(10, greatest(0,
-           least((b.discount - b.need_disc) / nullif(0.70 - b.need_disc, 0), 1) * 4
-         + case when b.posted_at >= now() - interval '2 hours'  then 3
-                when b.posted_at >= now() - interval '6 hours'  then 2
-                when b.posted_at >= now() - interval '24 hours' then 1 else 0 end
-         + case when b.condition = 'working' then 2 else 0 end
-         + case when b.title||' '||coalesce(b.description,'') ~* '(срочн|переезд|сегодня отда)' then 0.5 else 0 end
-         + case when b.title||' '||coalesce(b.description,'') ~* '(запечатан|не вскрыв|на гарантии|\yчек\y)' then 0.5 else 0 end
-       ))::numeric, 1) as score
+       public.lot_trust(b.discount, b.n_photos, length(coalesce(b.description,'')), b.condition) as trust,
+       public.lot_score(b.discount, b.need_disc,
+                        extract(epoch from (now() - b.posted_at)) / 3600.0,
+                        b.condition, b.title || ' ' || coalesce(b.description,'')) as score
 from base b
 where b.discount >= b.need_disc
 order by score desc, скидка_проц desc;
