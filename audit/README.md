@@ -256,6 +256,15 @@
   гейты клиента (категории, N% из discount_pct, регионы/города, стоп- и include-слова, min_score)
   поверх общего сбора; скоринг — те же lot_score/lot_trust (канон один). ТЕНЬ; Ф7-бот будет читать
   client_feed. Тест «второй клиент видит другое» (RR-08) — при подключении 2-го клиента.
+- **Ф4-ДОБИВКА СОБРАНА (12.06, вечер; НЕ деплоена, воркфлоу active:false):** последний кусок исходного
+  плана — гибрид regex+LLM. `sql/llm_condition.sql`: llm_verdicts + llm_queue (unknown-компоненты,
+  описание ≥40, по разу, ≤150/день RR-02, 25/прогон) + apply_llm_verdict (применение ТОЛЬКО high
+  working/dead и ТОЛЬКО поверх unknown — regex-dead не перетирается; applied по факту). DeepSeek-чат,
+  t=0, JSON-режим, асимметрия в промпте («дефект бьёт позитив», «новый = unknown»). Экзамен += 57
+  (перетирание LLM-вердиктов пересчётом = 0) и info 94/95; relabel_sync_check исключает applied-лоты.
+  ⚠️ ПРОЦЕДУРА: будущие блоки «update lots set condition = lot_condition(...)» обязаны добавлять
+  «and not exists (select 1 from llm_verdicts v where v.lot_id = lots.id and v.applied)».
+  Порядок: SQL → импорт → ручной прогон → РЕВЬЮ вердиктов глазами → только потом Active.
 - **N8N-1 СНЯТ ПРОВЕРКОЙ (12.06, 18:40):** свежие не-компоненты за 2 дня — is_component NULL=726,
   false=0 → константа в Insert-ноде игнорируется (Map Automatically), чистка не нужна. 48 true —
   исторический след ре-категоризации, безвреден.

@@ -50,3 +50,23 @@ basis K>20, свежесть 6ч) → Code (карточка: балл, свет
 
 Предохранители уже внутри: дедуп (повторно не шлёт), тихие часы, ≤6 пушей/час на клиента,
 только зрелые бакеты K>20, только свежие лоты ≤6ч, chat_id='TBD' = клиент молчит.
+
+---
+
+# llm_workflow.json — Ф4-добивка: LLM дочитывает спорные «неясные» (выключен, active:false)
+
+Цепочка: Manual + Schedule (раз в 2 часа) → Postgres `llm_queue` (только unknown-компоненты с
+содержательным описанием, по одному разу, ≤150/день, 25 за прогон) → Code (промпт-классификатор,
+JSON-режим, температура 0) → HTTP DeepSeek → Code (парс; кривой ответ → unknown/low, к данным не
+применяется) → Postgres `apply_llm_verdict` (high working/dead → lots.condition; regex-dead не
+перетирается; applied по факту апдейта).
+
+## Подключение
+1. SQL: прогнать `sql/llm_condition.sql` (таблица llm_verdicts + очередь + функция).
+2. Импорт llm_workflow.json. В ноде **DeepSeek**: Credential → Create new **Header Auth**:
+   Name = `Authorization`, Value = `Bearer sk-ВАШ_КЛЮЧ` (ключ только в credential!).
+   В нодах Postgres выбрать «Postgres account».
+3. Первый прогон — ВРУЧНУЮ (Execute workflow), затем выгрузка вердиктов на ревью
+   (запрос «для глаз» в конце llm_condition.sql). Active включать только после ревью вердиктов.
+4. Бюджет (RR-02): потолок 150 лотов/день зашит в llm_queue; модель deepseek-chat, t=0,
+   max_tokens 120 → порядок цены: доли цента за лот.

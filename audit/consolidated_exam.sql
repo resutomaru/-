@@ -52,6 +52,12 @@ from (
   union all
   select 56, 'score', 'несовпадения светофора (вкл. red-обязан: >70%, фото≤1, пустое описание)',
          (select count(*) from score_golden_eval where predicted_trust is distinct from expected_trust), '0'
+  -- 5c) LLM-ДОБИВКА (Ф4-гибрид): применённый вердикт обязан жить в lots.condition —
+  --     красное здесь = чей-то пересчёт condition молча перетёр LLM-вердикты
+  union all
+  select 57, 'llm', 'применённые LLM-вердикты перетёрты пересчётом (должно быть 0)',
+         (select count(*) from llm_verdicts v join lots l on l.id = v.lot_id
+           where v.applied and v.verdict is distinct from l.condition), '0'
   -- 6) ИНВАРИАНТЫ ИСТОРИИ ЦЕН (самосинк D4 обязан держать нули)
   union all
   select 60, 'history', 'рассинхрон с lots (ключ/категория/condition)',
@@ -91,6 +97,12 @@ from (
   select 93, 'инфо', 'компонентов без position_key (NEW-3-остаток: словарные нули)',
          (select count(*) from lots
            where item_category in ('gpu','cpu','ram','mobo','ssd','psu') and position_key is null), 'ℹ'
+  union all
+  select 94, 'инфо', 'LLM-вердиктов всего (Ф4-добивка)',
+         (select count(*) from llm_verdicts), 'ℹ'
+  union all
+  select 95, 'инфо', 'LLM-вердиктов применено к lots (high working/dead)',
+         (select count(*) from llm_verdicts where applied), 'ℹ'
   -- 9) WEAK KEYS (R5-пакет, одобрен 11.06; реестр: audit/keys/weak_keys.md).
   --    ПОСЛЕ деплоя пакета все четыре = 0. ДО деплоя ожидаемо >0 (фиксы лежат в git) —
   --    это маркер «пакет ещё не раскатан», не тревога.

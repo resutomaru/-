@@ -8,7 +8,9 @@ select
   count(*) filter (where item_category is distinct from public.lot_category(title, model))
     as категория_расходится,
   count(*) filter (where item_category in ('gpu','cpu','ram','mobo','ssd','psu')
-                   and condition is distinct from public.lot_condition(title, description))
+                   and condition is distinct from public.lot_condition(title, description)
+                   and not exists (select 1 from llm_verdicts v          -- LLM-вердикты (Ф4-добивка)
+                                   where v.lot_id = lots.id and v.applied)) -- расходиться ИМ положено
     as состояние_расходится,
   count(*) filter (where item_category in ('gpu','cpu','ram','mobo','ssd','psu')
                    and is_component is distinct from public.lot_is_component(title))
