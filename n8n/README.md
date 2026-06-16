@@ -66,6 +66,10 @@ JSON-режим, температура 0) → HTTP DeepSeek → Code (парс;
 2. Импорт llm_workflow.json. В ноде **DeepSeek**: Credential → Create new **Header Auth**:
    Name = `Authorization`, Value = `Bearer sk-ВАШ_КЛЮЧ` (ключ только в credential!).
    В нодах Postgres выбрать «Postgres account».
+   ⚠️ ЭНДПОИНТ: ключ куплен через посредника **ProxyAPI** (Россия, оплата ₽) → URL ноды =
+   `https://api.proxyapi.ru/deepseek/chat/completions` (OpenAI-совместимый passthrough, тело и
+   модель `deepseek-chat` те же). Если переедешь на ПРЯМОЙ ключ deepseek.com — верни URL
+   `https://api.deepseek.com/chat/completions`. Источник: proxyapi.ru/docs/deepseek-text-generation.
 3. Первый прогон — ВРУЧНУЮ (Execute workflow), затем выгрузка вердиктов на ревью
    (запрос «для глаз» в конце llm_condition.sql). Active включать только после ревью вердиктов.
 4. Бюджет (RR-02): потолок 150 лотов/день зашит в llm_queue; модель deepseek-chat, t=0,
