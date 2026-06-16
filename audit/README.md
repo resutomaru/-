@@ -265,6 +265,13 @@
   ⚠️ ПРОЦЕДУРА: будущие блоки «update lots set condition = lot_condition(...)» обязаны добавлять
   «and not exists (select 1 from llm_verdicts v where v.lot_id = lots.id and v.applied)».
   Порядок: SQL → импорт → ручной прогон → РЕВЬЮ вердиктов глазами → только потом Active.
+- **Ф4-ДОБИВКА — ТРУБА ПРОВЕРЕНА (16.06): DeepSeek через ProxyAPI/OpenRouter живой**
+  (`https://api.proxyapi.ru/openrouter/v1/chat/completions`, модель `deepseek/deepseek-chat`).
+  Первый ручной батч (25 свежих лотов): все вердикты `unknown`, applied=0 — КОРРЕКТНО и БЕЗОПАСНО:
+  новьё помечено unknown (политика новья соблюдена самой моделью), сухие характеристики → unknown,
+  безрассудных working/dead нет (асимметрия держится). «Переворотов» нет т.к. очередь отдаёт свежие
+  (posted_at desc) = сухие объявления; спорные кейсы глубже в бэклоге. Гейт перед Active: несколько
+  ручных батчей → ревью dead/working-переворотов глазами → потом тумблер.
 - **N8N-1 СНЯТ ПРОВЕРКОЙ (12.06, 18:40):** свежие не-компоненты за 2 дня — is_component NULL=726,
   false=0 → константа в Insert-ноде игнорируется (Map Automatically), чистка не нужна. 48 true —
   исторический след ре-категоризации, безвреден.
