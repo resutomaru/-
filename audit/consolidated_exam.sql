@@ -75,6 +75,10 @@ from (
   union all
   select 63, 'history', 'сироты (lot_id, которого нет в lots)',
          (select count(*) from price_history ph where not exists (select 1 from lots l where l.id = ph.lot_id)), '0'
+  union all
+  select 64, 'history', 'новьё/магазин в источнике медианы (E19; должно быть 0)',
+         (select count(*) from price_history ph join lots l on l.id = ph.lot_id
+           where not public.lot_is_used_private(l.title, l.description)), '0'
   -- 7) ИНВАРИАНТЫ МЕДИАН (каркас Ф5; сейчас medians может быть пустой — нули валидны)
   union all
   select 70, 'medians', 'строки с выборкой <8 после отсечки (RR-04)',

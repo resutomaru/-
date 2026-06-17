@@ -31,6 +31,7 @@ begin
     and l.price is not null
     and l.position_key is not null
     and l.is_component is distinct from false
+    and public.lot_is_used_private(l.title, l.description)   -- E19: только Б/У частное (новьё/магазин не задирают медиану)
   on conflict (lot_id) do update
     set position_key  = excluded.position_key,
         item_category = excluded.item_category,
@@ -43,7 +44,8 @@ begin
    where ph.lot_id = l.id
      and (l.item_category not in ('gpu','cpu','ram','mobo','ssd','psu')
           or l.is_component = false
-          or l.position_key is null);
+          or l.position_key is null
+          or not public.lot_is_used_private(l.title, l.description));  -- E19: вычищаем уже банкнутое новьё/магазин
 end $$;
 
 -- расписание (pg_cron). Требует: create extension if not exists pg_cron;
