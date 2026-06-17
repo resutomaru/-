@@ -67,6 +67,7 @@ insert into key_golden (category, title, model, brand, expected, danger, err, so
 ('ram','Серверная память 32GB ECC REG 2133',null,null,null,true,'R5','regression','R5: даже с частотой, но без поколения — ключа нет (danger)'),
 ('ram','DDR5 32GB 7200 МГц',null,null,'ddr5-32gb-7200',false,'R3','regression','пакет №2: кириллическая частота + DDR5-скорость из расширенного allowlist'),
 ('ram','Оперативная память DDR4 8GB 3200мгц',null,null,'ddr4-8gb-3200',false,'R3','regression','пакет №2: склеенная кириллическая частота'),
+('ram','Оперативная память HyperX ddr4 1x16 2666Hz',null,null,'ddr4-16gb-2666',false,'Hz-unit','regression','E19-чистка: частота с единицей Hz (не только MHz/МГц) — иначе no-speed бакет'),
 -- ---- MOBO (pk_mobo(model,title)) --------------------------------------------
 ('mobo','Материнская плата ASUS Prime B450M-A','ASUS PRIME B450M-A',null,'b450',false,'baseline','regression','чипсет'),
 ('mobo','MSI Z370-A PRO LGA1151','MSI Z370-A PRO',null,'z370',false,'baseline','regression','чипсет раньше сокета'),
