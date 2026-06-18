@@ -133,7 +133,7 @@ order by ord;
 -- =============================================================================
 
 -- (B) ЖИВЫЕ ТЕЛА ФУНКЦИЙ — Download CSV и отдать в чат для ДОСЛОВНОГО диффа с git-каноном (гейт №1).
---     ВСЕ 16 функций канона. Обновлено 17.06: список писался 06-11 на 12 функций; с тех пор
+--     ВСЕ 17 функций канона. Обновлено 18.06: +pk_gpu_base (E17-helper). Список писался 06-11 на 12; с тех пор
 --     добавлены +lot_score/+lot_trust (Ф6), +lot_is_used_private (E19), +apply_llm_verdict (Ф4) —
 --     без них живые тела новых «мозгов» не выгружались. Гейт №1 закрывался 06-11 для 12 функций;
 --     после этого задеплоены pk_ram(Hz)/pk_cpu/lot_condition(U-серия)/lot_category/lot_is_component/
@@ -143,7 +143,7 @@ order by ord;
 -- where n.nspname = 'public' and p.proname in
 --   ('lot_condition','lot_category','lot_is_component','lot_is_used_private',
 --    'lot_score','lot_trust','apply_llm_verdict',
---    'pk_cpu','pk_ram','pk_mobo','pk_ssd','pk_psu','pk_gpu',
+--    'pk_cpu','pk_ram','pk_mobo','pk_ssd','pk_psu','pk_gpu','pk_gpu_base',
 --    'normalize_new_lots','snapshot_price_history','compute_medians')
 -- order by p.proname;
 

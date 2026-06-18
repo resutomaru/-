@@ -1,5 +1,5 @@
--- pk_gpu — golden / regression set + harness (закрывает E14 для ключей; проверяет E9-фикс + v2-добор).
--- Истина (expected) из РЕАЛЬНЫХ gpu-выгрузок 2026-06-10 (266 + 22-нулевых) + синтетика на E9.
+-- pk_gpu — golden / regression set + harness (закрывает E14 для ключей; E9 + v2-добор + v3 E17-сверка).
+-- Истина (expected) из РЕАЛЬНЫХ gpu-выгрузок 2026-06-10 + зонд E17 18.06 (60 расхождений model↔title) + синтетика E9.
 -- Прогон в Supabase SQL Editor, где развёрнута pk_gpu(). Норма: mismatches = 0.
 -- ВАЖНО: expected = ИСТИНА (ground truth), а не предсказание текущей функции.
 create table if not exists gpu_key_golden (
@@ -28,7 +28,7 @@ insert into gpu_key_golden (title, model, expected, note) values
 ('Видеокарта rtx 3050',                          'GeForce RTX 3050 Dual',                        'rtx3050',           'без объёма → голый ключ'),
 ('Неисправная видеокарта AMD r9 370 4gb 256 bit gddr', 'Radeon R9 370 4Gb',                     'r9370_4g',          'покрытие: AMD R9'),
 ('Видеокарта gts 450 1gb ggr5',                  'GeForce GTS 450 1GB',                          'gts450_1g',         'покрытие: nVidia GTS'),
-('Видеокарта rx 570 8gb',                        'AMD Radeon RX 580 8GB',                        'rx580_8g',          'model-first: продавец мис-тегнул (остаток E17, осознанно)'),
+('Видеокарта rx 570 8gb',                        'AMD Radeon RX 580 8GB',                        null,                'E17 v3: rx570≠rx580 (мис-тег model) → конфликт → null (было rx580_8g)'),
 ('AMD Radeon R3 512GB',                          null,                                           null,                'R3 не дискретка + guard объёма: 512GB не даёт мусор'),
 -- v2: base-фолбэк на заголовок (§4.4), Intel Arc (E11), гард сборок, намеренный safe-null
 ('Видеокарта gt210 1gb ddr3',                    'NVIDIA GeForce 210 1GB',                       'gt210_1g',          'v2 title-fallback: model «GeForce 210» без GT, в заголовке gt210'),
@@ -40,7 +40,15 @@ insert into gpu_key_golden (title, model, expected, note) values
 ('Комплект пк: мат.плата + i5 + RX 590 8gb',     null,                                           null,                'R6: бандл с ПУСТЫМ model не ключуется и primary-путём'),
 -- пакет №4 (зонд №1): объём ≠ номер модели
 ('Видеокарта GeForce GT 512MB DDR2',             null,                                           null,                'P4: «512MB» — объём, не модель → мусор-ключ gt512 запрещён'),
-('Видеокарта GT 710 1GB',                        null,                                           'gt710_1g',          'P4-контроль: настоящий GT-номер рядом с объёмом живёт');
+('Видеокарта GT 710 1GB',                        null,                                           'gt710_1g',          'P4-контроль: настоящий GT-номер рядом с объёмом живёт'),
+-- v3 (зонд E17 18.06): конфликт числа/варианта → null; опечатка ПРЕФИКСА (то же число+вариант) → ключ из model
+('Видеокарта Afox RX 550 8gb',                   'AMD Radeon RX 580 8GB',                        null,                'E17: rx550≠rx580 (named-кейс) → молчим'),
+('Видеокарта rx480 8gb sapphire',                'AMD Radeon RX 580 8GB',                        null,                'E17: rx480≠rx580 → молчим'),
+('Видеокарта rtx 3070',                          'GeForce RTX 3070 Ti 8GB',                      null,                'E17: вариант 3070≠3070ti (false-source #1 плана) → молчим'),
+('Gtx 1650 super msi',                           'GeForce GTX 1650 VENTUS XS OC 4G',             null,                'E17: 1650super≠1650 → молчим'),
+('Видеокарта MSI GeForce RTX 3080 Ti',           'GeForce GTX 550 Ti 1GB',                       null,                'E17: грубый мис-тег 3080ti vs 550ti → молчим'),
+('Видеокарта rtx 1080ti Gaming X',               'GeForce GTX 1080 Ti GAMING X 11GB',            'gtx1080ti_11g',     'E17-контроль: опечатка префикса rtx/gtx, число+вариант те же → ключ из model'),
+('Видеокарта radeon 7870 2gb с водоблоком',      'Radeon HD 7870 2GB',                           'hd7870_2g',         'E17-контроль: title даёт несуществующий rx7870, model hd7870 — та же карта → model');
 
 create or replace view gpu_key_eval as
   select g.*, pk_gpu(g.model, g.title) as predicted from gpu_key_golden g;
