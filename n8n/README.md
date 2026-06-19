@@ -76,3 +76,20 @@ JSON-режим, температура 0) → HTTP DeepSeek → Code (парс;
    (запрос «для глаз» в конце llm_condition.sql). Active включать только после ревью вердиктов.
 4. Бюджет (RR-02): потолок 150 лотов/день зашит в llm_queue; модель deepseek-chat, t=0,
    max_tokens 120 → порядок цены: доли цента за лот.
+
+---
+
+# E17-b — DeepSeek-арбитраж GPU-ключа (заголовок↔model). ВЫКЛ (active:false) до ревью.
+
+Не отдельный воркфлоу с нуля — **клон `llm_workflow.json`** (та же труба ProxyAPI/OpenRouter, t=0, JSON):
+1. SQL: прогнать `sql/llm_gpu_keys.sql` (таблица `llm_gpu_verdicts` + вью `llm_gpu_queue` + `apply_llm_gpu_verdict`).
+2. Postgres-нода очереди: `select * from llm_gpu_queue` (вместо `llm_queue`).
+3. DeepSeek-нода: промпт БИНАРНОГО арбитража — целиком в шапке `sql/llm_gpu_keys.sql` (A=заголовок, B=model,
+   иначе unsure). Эндпоинт/credential — те же, что у condition-трубы.
+4. Парс-нода: `A→'title'`, `B→'model'`, иначе `'unsure'`.
+5. Apply-нода: `select apply_llm_gpu_verdict({{lot_id}}, '{{choice}}', '{{confidence}}', '{{reason}}', 'deepseek/deepseek-chat');`
+6. **ОБЯЗАТЕЛЬНО:** ручной прогон 1-2 батчей → ревью глазами (запрос «для глаз» внизу `llm_gpu_keys.sql`) →
+   только потом Active. Гейт: нет явно неверных A/B; экзамен строка 58 = 0.
+
+Безопасность: применяется ТОЛЬКО `high`+конкретный выбор+ключ-кандидат+`position_key IS NULL` (не перетирает
+скрипт, не выдумывает третью карту). Бюджет: ≤50/день (зашит в `llm_gpu_queue`), 25/прогон.

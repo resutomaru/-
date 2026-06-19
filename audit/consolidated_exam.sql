@@ -8,6 +8,7 @@
 --   audit/keys/pk_gpu.golden.sql, audit/keys/key_golden.sql, audit/category/category_golden.sql).
 --   Если какой-то вью нет — сначала прогнать соответствующий файл сети. С Ф6 добавлена шестая сеть:
 --   audit/score/score_golden.sql (строки 55/56 экзамена упадут с ошибкой, пока она не засеяна).
+--   E17-b: строка 58 требует sql/llm_gpu_keys.sql (таблица llm_gpu_verdicts) — иначе упадёт «relation … does not exist».
 -- НОРМА: у всех строк с norm='0' observed = 0 (verdict ✓). 'ℹ' — справочные счётчики
 --   (gap-бэклог ожидаемо 2: MX500-словарь, дробные ТБ — осознанный бэклог).
 -- =============================================================================
@@ -58,6 +59,12 @@ from (
   select 57, 'llm', 'применённые LLM-вердикты перетёрты пересчётом (должно быть 0)',
          (select count(*) from llm_verdicts v join lots l on l.id = v.lot_id
            where v.applied and v.verdict is distinct from l.condition), '0'
+  -- 5d) LLM-GPU-АРБИТРАЖ (E17-b): применённый выбор обязан жить в lots.position_key (= одному из кандидатов);
+  --     красное = чей-то ре-ключ перетёр применённый арбитраж ИЛИ применили не-кандидата
+  union all
+  select 58, 'llm-gpu', 'применённый gpu-арбитраж: ключ лота ≠ выбранному кандидату (E17-b)',
+         (select count(*) from llm_gpu_verdicts v join lots l on l.id = v.lot_id
+           where v.applied and l.position_key is distinct from v.key_applied), '0'
   -- 6) ИНВАРИАНТЫ ИСТОРИИ ЦЕН (самосинк D4 обязан держать нули)
   union all
   select 60, 'history', 'рассинхрон с lots (ключ/категория/condition)',
@@ -133,7 +140,7 @@ order by ord;
 -- =============================================================================
 
 -- (B) ЖИВЫЕ ТЕЛА ФУНКЦИЙ — Download CSV и отдать в чат для ДОСЛОВНОГО диффа с git-каноном (гейт №1).
---     ВСЕ 17 функций канона. Обновлено 18.06: +pk_gpu_base (E17-helper). Список писался 06-11 на 12; с тех пор
+--     ВСЕ 18 функций канона. Обновлено 18.06: +pk_gpu_base, +apply_llm_gpu_verdict (E17). Список писался 06-11 на 12; с тех пор
 --     добавлены +lot_score/+lot_trust (Ф6), +lot_is_used_private (E19), +apply_llm_verdict (Ф4) —
 --     без них живые тела новых «мозгов» не выгружались. Гейт №1 закрывался 06-11 для 12 функций;
 --     после этого задеплоены pk_ram(Hz)/pk_cpu/lot_condition(U-серия)/lot_category/lot_is_component/
@@ -142,7 +149,7 @@ order by ord;
 -- from pg_proc p join pg_namespace n on n.oid = p.pronamespace
 -- where n.nspname = 'public' and p.proname in
 --   ('lot_condition','lot_category','lot_is_component','lot_is_used_private',
---    'lot_score','lot_trust','apply_llm_verdict',
+--    'lot_score','lot_trust','apply_llm_verdict','apply_llm_gpu_verdict',
 --    'pk_cpu','pk_ram','pk_mobo','pk_ssd','pk_psu','pk_gpu','pk_gpu_base',
 --    'normalize_new_lots','snapshot_price_history','compute_medians')
 -- order by p.proname;
@@ -152,7 +159,7 @@ order by ord;
 -- select c.relname, pg_get_viewdef(c.oid, true) as def
 -- from pg_class c join pg_namespace n on n.oid = c.relnamespace
 -- where n.nspname = 'public' and c.relkind = 'v' and c.relname in
---   ('deal_preview','client_feed','median_overview','llm_queue','push_queue','bucket_readiness')
+--   ('deal_preview','client_feed','median_overview','llm_queue','llm_gpu_queue','push_queue','bucket_readiness')
 -- order by c.relname;
 
 -- (C) pg_cron: список джобов (ожидаем 3: normalize */2, snapshot */5, medians '3 * * * *'):
