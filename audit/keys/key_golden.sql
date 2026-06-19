@@ -30,8 +30,8 @@ delete from key_golden where source in ('regression','gap');
 
 insert into key_golden (category, title, model, brand, expected, danger, err, source, note) values
 -- ---- CPU --------------------------------------------------------------------
-('cpu','Процессор AMD Ryzen 5 5600X','AMD Ryzen 5 5600X',null,'ryzen5-5600x',false,'baseline','regression','ryzen + суффикс x'),
-('cpu','Процессор Ryzen 5 2600',null,null,'ryzen5-2600',false,'baseline','regression','ryzen без суффикса'),
+('cpu','Процессор AMD Ryzen 5 5600X','AMD Ryzen 5 5600X',null,'ryzen-5600x',false,'baseline','regression','R6-cpu: ryzen без тира (4-знач. номер уникален)'),
+('cpu','Процессор Ryzen 5 2600',null,null,'ryzen-2600',false,'baseline','regression','ryzen без суффикса/тира'),
 ('cpu','Intel Core i5-12400F','Intel Core i5-12400F',null,'i5-12400f',false,'baseline','regression','i5 дефисная форма'),
 ('cpu','Процессор Intel Core i5 11400F',null,null,'i5-11400f',false,'baseline','regression','i5 пробельная форма → тот же ключ'),
 ('cpu','Intel Xeon E5-2670 v3','Intel Xeon E5-2670 v3',null,'xeon-e5-2670v3',false,'baseline','regression','xeon e-серия + ревизия v3'),
@@ -46,13 +46,16 @@ insert into key_golden (category, title, model, brand, expected, danger, err, so
 ('cpu','AMD Athlon 200GE AM4',null,null,'athlon-200ge',false,'R5','regression','R5: двухбуквенный хвост модели (ge) сохраняется'),
 ('cpu','Intel Core Ultra 7 265K',null,null,'ultra7-265k',false,'baseline','regression','core ultra (новое поколение)'),
 ('cpu','Процессор Intel Xeon Gold 6248',null,null,'xeon-gold-6248',false,'E11','regression','Scalable покрыт (probe C): gold/platinum/silver/bronze'),
-('cpu','AMD Ryzen 5 PRO 4650G',null,null,'ryzen5-4650g',false,'probeC','regression','PRO-инфикс (как Pentium Gold)'),
+('cpu','AMD Ryzen 5 PRO 4650G',null,null,'ryzen-4650g',false,'probeC','regression','PRO-инфикс; без тира (R6-cpu)'),
 ('cpu','Xeon X3460 4 ядра LGA1156',null,null,'xeon-x3460',true,'D2','regression','D2-fix2: «4 ядра» НЕ v4 — v-ревизия требует букву v (danger; поймала регресс)'),
 ('cpu','Intel Xeon E5-2660 8 ядер 2.2ГГц',null,null,'xeon-e5-2660',true,'D2','regression','D2-fix2: «8 ядер» НЕ v8 (E/W/L-ветка, danger)'),
 ('cpu','Xeon Platinum 8358P 32 ядра',null,null,'xeon-platinum-8358',false,'probeC','regression','Scalable platinum (суффикс p отброшен)'),
 ('cpu','Процессор Xeon 2680 v2 LGA2011',null,null,'xeon-2680v2',true,'D2','regression','самоаудит D2: v-суффикс у голого Xeon — без него поколения сливаются в один бакет (danger)'),
 ('cpu','Процессор для игрового ПК, недорого',null,null,null,false,'baseline','regression','нет модели → null'),
 ('cpu','Intel Pentium Gold G7400',null,null,'pentium-g7400',false,'NEW-2','regression','закрыто 11.06: pentium допускает инфикс gold/silver'),
+('cpu','Процессор Ryzen 5600X (без тира в заголовке)',null,null,'ryzen-5600x',false,'R6cpu','regression','R6-cpu (18.06): безтировый «5600X» = тот же ключ, что «Ryzen 5 5600X» (был мусор ryzen5-600x)'),
+('cpu','AMD Ryzen 5700X3D OEM',null,null,'ryzen-5700x3d',false,'R6cpu','regression','R6-cpu: безтировый 5700X3D (был ryzen5-700x3d)'),
+('cpu','Intel Core i5 10600К (кириллица)',null,null,'i5-10600k',false,'cyrillic-k','regression','де-гомоглиф: кириллическая «К» суффикса → k (был i5-10600)'),
 -- ---- RAM (model обычно пуст → парсим заголовок) ------------------------------
 ('ram','Оперативная память DDR4 16GB 3200MHz',null,null,'ddr4-16gb-3200',false,'baseline','regression','одиночный модуль'),
 ('ram','Kingston Fury Beast DDR5 32GB 6000',null,null,'ddr5-32gb-6000',false,'baseline','regression','ddr5'),

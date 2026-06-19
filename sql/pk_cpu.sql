@@ -6,9 +6,12 @@ as $$
 declare s text; m text[];
 begin
   if raw is null then return null; end if;
-  s := translate(lower(raw), 'хс', 'xc');
-  m := regexp_match(s,'ryzen\s*(?:pro\s*)?([3579])\s*(?:pro\s*)?([0-9]{3,4})\s*(x3d|xt|ge|gt|x|g|f)?');  -- pro-инфикс (probe C)
-    if m is not null then return 'ryzen'||m[1]||'-'||m[2]||coalesce(m[3],''); end if;
+  s := translate(lower(raw), 'хск', 'xck');  -- де-гомоглиф: +кириллическая к→k (суффикс «10600К» терял k)
+  -- R6-cpu (18.06): ТИР выкинут из ключа — 4-значный номер уникален («5600X» — всегда Ryzen 5 5600X).
+  --   Безтировый «Ryzen 5600X» больше НЕ дробится в ryzen5-600x; «Ryzen 5 5600X» даёт тот же ryzen-5600x.
+  --   Опц. тир [3579]+пробел съедается, чтобы 4-значную модель не путать с тиром. (PRO-инфикс сохранён.)
+  m := regexp_match(s,'ryzen\s*(?:pro\s*)?(?:[3579]\s+)?(?:pro\s*)?([0-9]{4})\s*(x3d|xt|ge|gt|x|g|f)?');
+    if m is not null then return 'ryzen-'||m[1]||coalesce(m[2],''); end if;
   m := regexp_match(s,'core\s*ultra\s*([3579])\s*([0-9]{3})\s*(kf|ks|k|f|hx|h)?');
     if m is not null then return 'ultra'||m[1]||'-'||m[2]||coalesce(m[3],''); end if;
   m := regexp_match(s,'core\s*2\s*(duo|quad)\s*([a-z]?[0-9]{4})');
