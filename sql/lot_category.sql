@@ -19,12 +19,20 @@
 --   426К; «Dell R640 2xXeon» — в cpu за 299К → отрава бакетов). Ловим: \yсервер\w{0,2}\y (НЕ «серверная»
 --   память — хвост ≤2 букв), server/poweredge/proliant/supermicro, шасси dl3[68]0 / r[67]x0.
 --   Внешние SSD/диски → other (готовый внешний накопитель ≠ внутренний SSD; «Внешний SSD HP P500»).
+-- v3.0 (NEW-1 аудит, 2026-06-18): целевой прочёс чистоты категорий (зонд keyword-absent). Найдено узко:
+--   (1) бренд-мини-ПК (thinkcentre/optiplex/prodesk/elitedesk/nuc/неттоп) → assembly: «Lenovo ThinkCentre»
+--       с model=Ryzen утекал в cpu через model-фолбэк, is_component=true → ОТРАВА медианы целым ПК.
+--   (2) монитор-продукт → other: refresh «260MHz» утекал в ram через mhz-триггер. Гард компонент-слов
+--       бережёт живые карты («видеокарта для монитора» остаётся gpu).
+--   gpu/mobo/psu — чисто (0 подозрительных). Бандлы-в-cpu — median-safe (is_component=false), не трогаем.
 create or replace function public.lot_category(title text, model text)
  returns text language sql immutable as $$
   select case
     when coalesce(title,'') ~* '(\yмыш|клавиатур|гарнитур|наушник|джойстик|геймпад|веб[- ]?камер|вебкамер|райзер|\yriser\y)' then 'other'
     when coalesce(title,'') ~* '^(радиатор|крепление|кулер|подставка|кабель|переходник|сумка|коврик|корпус|кронштейн|держател|б[эе]кплейт|рамка|наклейк|термопроклад|термопаст|охлажден|систем\w*\s+охлажден|адаптер|вентилятор)' then 'other'
-    when coalesce(title,'') ~* '(ноутбук|\yноут\y|в сборе|системн\w* блок|компьютер в сборе|моноблок|\yсервер\w{0,2}\y|\yserver\y|poweredge|proliant|supermicro|\ydl ?3[68]0|\yr[67][1-9]0)' then 'assembly'
+    when coalesce(title,'') ~* '(ноутбук|\yноут\y|в сборе|системн\w* блок|компьютер в сборе|моноблок|\yсервер\w{0,2}\y|\yserver\y|poweredge|proliant|supermicro|\ydl ?3[68]0|\yr[67][1-9]0|thinkcentre|optiplex|prodesk|elitedesk|\ynuc\y|неттоп|мини[- ]?пк)' then 'assembly'  -- v3.0: +бренд-мини-ПК (NEW-1)
+    when coalesce(title,'') ~* '\yмонитор'
+         and coalesce(title,'') !~* '(видеокарт|geforce|\yrtx|\ygtx|radeon|процессор|ryzen|core ?i|материнск|\yssd\y|nvme|блок ?пит|оперативн|\yddr)' then 'other'  -- v3.0: монитор-продукт (refresh «MHz» утекал в ram, NEW-1)
     when coalesce(title,'') ~* '(водян\w*\s*охлажд|жидкостн\w*\s*охлажд|\yсжо\y|водоблок|башн\w*\s*охлажд)'
          and coalesce(title,'') !~* '(видеокарт|geforce|\yrtx|\ygtx|radeon|quadro|материнск|материнк|комплект|в сборе|\+)' then 'other'
     when coalesce(title,'') ~* '(видеокарт|geforce|\yrtx|\ygtx|radeon|\yrx ?\d{3,4}|\ygt ?\d{3,4}|quadro)' then 'gpu'

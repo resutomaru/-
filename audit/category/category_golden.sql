@@ -86,6 +86,11 @@ insert into category_golden (title, model, expected, danger, err, source, note) 
 ('Dell R640 10SFF 2x Xeon Gold 6246 256GB',       null, 'assembly', true,  'P4',         'regression', 'сервер БЕЗ слова «сервер» — шасси-паттерн r640; утекал в cpu за 299К'),
 ('Внешний SSD диск 250Gb HP P500',                null, 'other',    true,  'P4',         'regression', 'внешний накопитель — другой товар, не внутренний SSD'),
 ('Серверная память Samsung 64GB DDR4 ECC',        null, 'ram',      false, 'P4',         'regression', 'контроль: «серверНАЯ» память остаётся ram (хвост >2 букв не матчит сервер-гард)'),
+-- ---- ЗАКРЫТО v3.0 (NEW-1 аудит чистоты категорий, 18.06): бренд-ПК + мониторы ------
+('Lenovo ThinkCentre M715q Ryzen 5 PRO 2400GE',   null, 'assembly', true,  'NEW-1',      'regression', 'бренд-мини-ПК утекал в cpu через model-фолбэк (is_component=true → отрава медианы целым ПК)'),
+('Игровой монитор Philips 27M2N3500PF 260MHz 2K',  null, 'other',    true,  'NEW-1',      'regression', 'монитор утекал в ram через «MHz» (refresh-частота)'),
+('Видеокарта RTX 3070 для 4K монитора',           null, 'gpu',      false, 'NEW-1',      'regression', 'контроль: «для монитора» НЕ выталкивает видеокарту (гард компонент-слов)'),
+('Неттоп Intel NUC i5 mini PC',                   null, 'assembly', true,  'NEW-1',      'regression', 'мини-ПК NUC/неттоп → assembly, не cpu'),
 -- ---- GAP: открытые дыры (ожидаемо красные; бэклог реальной выборки) -----------
 ('Накопитель Crucial MX500 500GB',                null, 'ssd',      false, 'NEW-2',      'gap', 'SSD-модель без слова ssd/nvme/evo → other; словарь моделей — из реальной выборки');
 
