@@ -49,7 +49,7 @@ select
   )                                                            as mismatches_MUST_BE_0,
   count(*)                                                     as cases,
   -- инвариант g4: непроданное лежит ≥ 0 дней (дата not in future)
-  count(*) filter (where l.title = 'g4 в наличии' and l.дней_в_обороте < 0) as g4_days_negative_MUST_BE_0
+  count(*) filter (where e.title = 'g4 в наличии' and l.дней_в_обороте < 0) as g4_days_negative_MUST_BE_0
 from expected e
 join deal_ledger l on l.item_title = e.title and l.client_id = '__golden_deal__';
 
