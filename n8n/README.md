@@ -106,8 +106,10 @@ callback_query) → **Postgres** `select * from tg_router($1::jsonb)` (мозг:
 push-карточку при go-live (бот её уже понимает).
 
 ## Подключение (после деплоя sql/deals.sql, sql/journal_capture.sql, sql/tg_router.sql)
-1. **BotFather** → `/newbot` → токен. Токен только в n8n: Credentials → Telegram API → вставить (в git НЕ кладём).
-   Можно переиспользовать тот же бот-аккаунт, что и для пушей (push_workflow.json).
+1. **Бот и токен УЖЕ ЕСТЬ** (ПЕРЕКУП AI + credential «Telegram account», созданы на push-тесте 12.06).
+   Нового бота НЕ создавать. Этот воркфлоу — **ВХОДЯЩАЯ** половина (приём `/команд` и кнопок); исходящая
+   рассылка карточек — отдельный `push_workflow.json`. Оба на ОДНОМ боте: push только ШЛЁТ (sendMessage),
+   этот только ПРИНИМАЕТ (Telegram Trigger/вебхук) — не конфликтуют.
 2. **Свой chat_id**: напиши боту любое сообщение → открой `https://api.telegram.org/bot<ТОКЕН>/getUpdates`
    → `"chat":{"id": ЧИСЛО}`. Пропиши его клиенту:
    `update client_configs set chat_id='ЧИСЛО' where client_id='vovchik';`
