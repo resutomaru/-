@@ -52,6 +52,6 @@ begin
   if cap is not null then parts:=parts||(cap||'gb'); end if;
   if spd is not null then parts:=parts||spd; end if;
   if so  is not null then parts:=parts||so;  end if;
-  if prem            then parts:=parts||'prem'; end if;
+  if prem            then parts:=parts||'prem'::text; end if;
   return array_to_string(parts,'-');
 end $$;
