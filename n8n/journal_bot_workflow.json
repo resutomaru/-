@@ -1,0 +1,67 @@
+{
+  "name": "Journal bot",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": ["message", "callback_query"],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0],
+      "id": "22222222-2222-2222-2222-222222222201",
+      "name": "On message / button",
+      "webhookId": "journal-bot-001",
+      "credentials": {
+        "telegramApi": { "name": "Telegram account" }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select * from public.tg_router($1::jsonb);",
+        "options": {
+          "queryReplacement": "={{ [JSON.stringify($json)] }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [220, 0],
+      "id": "22222222-2222-2222-2222-222222222202",
+      "name": "tg_router (brain)",
+      "credentials": {
+        "postgres": { "name": "Postgres account" }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "={{ $json.reply }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [440, 0],
+      "id": "22222222-2222-2222-2222-222222222203",
+      "name": "Send reply",
+      "credentials": {
+        "telegramApi": { "name": "Telegram account" }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On message / button": {
+      "main": [[{ "node": "tg_router (brain)", "type": "main", "index": 0 }]]
+    },
+    "tg_router (brain)": {
+      "main": [[{ "node": "Send reply", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -93,3 +93,31 @@ JSON-режим, температура 0) → HTTP DeepSeek → Code (парс;
 
 Безопасность: применяется ТОЛЬКО `high`+конкретный выбор+ключ-кандидат+`position_key IS NULL` (не перетирает
 скрипт, не выдумывает третью карту). Бюджет: ≤50/день (зашит в `llm_gpu_queue`), 25/прогон.
+
+---
+
+# journal_bot_workflow.json — «Помощник·Журнал»: Telegram-бот (выключен, active:false)
+
+Тонкая труба (вся логика — в SQL `tg_router`, как ingest/push): **Telegram Trigger** (message +
+callback_query) → **Postgres** `select * from tg_router($1::jsonb)` (мозг: роутинг команд/кнопок,
+`buy_lot`/`mark_sold`, дашборд `deal_dashboard`, привязка chat_id→client_id) → **Telegram** sendMessage
+(`{{$json.reply}}` в `{{$json.chat_id}}`). Команды: `/журнал`, `/купил <id лота> [цена]`,
+`/продал <id сделки> <цена>`, `/help`. Кнопка «Купил» на пуш-карточке (`buy:<lot_id>`) — добавим в
+push-карточку при go-live (бот её уже понимает).
+
+## Подключение (после деплоя sql/deals.sql, sql/journal_capture.sql, sql/tg_router.sql)
+1. **BotFather** → `/newbot` → токен. Токен только в n8n: Credentials → Telegram API → вставить (в git НЕ кладём).
+   Можно переиспользовать тот же бот-аккаунт, что и для пушей (push_workflow.json).
+2. **Свой chat_id**: напиши боту любое сообщение → открой `https://api.telegram.org/bot<ТОКЕН>/getUpdates`
+   → `"chat":{"id": ЧИСЛО}`. Пропиши его клиенту:
+   `update client_configs set chat_id='ЧИСЛО' where client_id='vovchik';`
+   (теневой тест на себе; Вовчику — после go-live, RR-08.)
+3. **Импорт**: n8n → Import from File → journal_bot_workflow.json → в нодах Telegram и Postgres выбрать
+   свои credentials.
+4. **Активировать** воркфлоу (active=ON — боту нужен живой вебхук, чтобы принимать сообщения).
+5. **Тест**: напиши боту `/help` → должен ответить списком команд; `/журнал` → сводка (или «журнал пуст»);
+   `/купил <реальный id из lots>` → «✅ В журнал…»; `/продал <id сделки> <цена>` → «💰 Навар…».
+
+Безопасность: чужой chat_id (не в `client_configs`) → вежливый отказ (RR-08). Захват — через канон
+`buy_lot`/`mark_sold` (формула навара не дублируется, NEW-4). Параметр в Postgres-ноду уходит связанным
+($1::jsonb) — без склейки строк (инъекции нет).
