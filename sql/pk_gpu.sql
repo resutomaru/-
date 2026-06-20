@@ -75,6 +75,11 @@ begin
   s  := translate(lower(coalesce(nullif(model,''), title)), 'хс', 'xc');  -- model-first источник
   st := translate(lower(coalesce(title,'')), 'хс', 'xc');                  -- заголовок
 
+  -- E19 (глазной тест 20.06): мобильные/ноутбучные GPU ≠ десктопные (свой рынок, заметно дешевле) →
+  --   НЕ в десктопный бакет. Safe-null (как E17-конфликт): лот уходит из медианы, бакет не травится.
+  --   «3070m laptop» падало в rtx3070_8g (десктоп) и давало ложную скидку.
+  if (s || ' ' || st) ~ '(laptop|ноутбу|мобильн|max-?q|\y[0-9]{3,4}\s*m\y)' then return null; end if;
+
   -- гард сборок (R6): бандл-заголовок не даёт базу (иначе зашьём «Комплект i5 + RX 590» как rx590)
   bundle_t := st ~ '(комплект|\yв сборе\y|\yсборка\y|с процессор|\+\s*(rx|rtx|gtx|\ygt|radeon|geforce|arc|ryzen|core|i[3-9]|\d+\s*(gb|гб)))';
   if nullif(model,'') is null and bundle_t then return null; end if;  -- бандл с пустым model
