@@ -98,28 +98,31 @@ JSON-режим, температура 0) → HTTP DeepSeek → Code (парс;
 
 # journal_bot_workflow.json — «Помощник·Журнал»: Telegram-бот (выключен, active:false)
 
-Тонкая труба (вся логика — в SQL `tg_router`, как ingest/push): **Telegram Trigger** (message +
-callback_query) → **Postgres** `select * from tg_router($1::jsonb)` (мозг: роутинг команд/кнопок,
-`buy_lot`/`mark_sold`, дашборд `deal_dashboard`, привязка chat_id→client_id) → **Telegram** sendMessage
-(`{{$json.reply}}` в `{{$json.chat_id}}`). Команды: `/журнал`, `/купил <id лота> [цена]`,
-`/продал <id сделки> <цена>`, `/help`. Кнопка «Купил» на пуш-карточке (`buy:<lot_id>`) — добавим в
-push-карточку при go-live (бот её уже понимает).
+**ВХОДЯЩАЯ** половина бота (приём `/команд` и кнопок); исходящая рассылка карточек — отдельный
+`push_workflow.json`. Один бот ПЕРЕКУП AI, один токен.
 
-## Подключение (после деплоя sql/deals.sql, sql/journal_capture.sql, sql/tg_router.sql)
-1. **Бот и токен УЖЕ ЕСТЬ** (ПЕРЕКУП AI + credential «Telegram account», созданы на push-тесте 12.06).
-   Нового бота НЕ создавать. Этот воркфлоу — **ВХОДЯЩАЯ** половина (приём `/команд` и кнопок); исходящая
-   рассылка карточек — отдельный `push_workflow.json`. Оба на ОДНОМ боте: push только ШЛЁТ (sendMessage),
-   этот только ПРИНИМАЕТ (Telegram Trigger/вебхук) — не конфликтуют.
-2. **Свой chat_id**: напиши боту любое сообщение → открой `https://api.telegram.org/bot<ТОКЕН>/getUpdates`
-   → `"chat":{"id": ЧИСЛО}`. Пропиши его клиенту:
-   `update client_configs set chat_id='ЧИСЛО' where client_id='vovchik';`
-   (теневой тест на себе; Вовчику — после go-live, RR-08.)
-3. **Импорт**: n8n → Import from File → journal_bot_workflow.json → в нодах Telegram и Postgres выбрать
-   свои credentials.
-4. **Активировать** воркфлоу (active=ON — боту нужен живой вебхук, чтобы принимать сообщения).
-5. **Тест**: напиши боту `/help` → должен ответить списком команд; `/журнал` → сводка (или «журнал пуст»);
-   `/купил <реальный id из lots>` → «✅ В журнал…»; `/продал <id сделки> <цена>` → «💰 Навар…».
+**Почему ОПРОС, а не вебхук:** Telegram-триггер регистрирует вебхук — Telegram должен сам достучаться до
+n8n по публичному `https://`. n8n на `localhost` снаружи недоступен (`bad webhook: HTTPS required`). Поэтому
+бот построен на ОПРОСЕ getUpdates (как ингест rest-app): n8n сам исходящим запросом раз в 5с спрашивает
+«есть новые?». Работает на localhost. (При переезде на публичный HTTPS-хостинг, RR-13, можно вернуть вебхук.)
 
-Безопасность: чужой chat_id (не в `client_configs`) → вежливый отказ (RR-08). Захват — через канон
-`buy_lot`/`mark_sold` (формула навара не дублируется, NEW-4). Параметр в Postgres-ноду уходит связанным
-($1::jsonb) — без склейки строк (инъекции нет).
+Цепочка: **Schedule (5с)** → **Postgres** `select tg_offset from bot_state` → **HTTP** `getUpdates?offset=…`
+→ **Postgres** `select * from tg_poll(result)` (мозг: канон `tg_router` по каждому апдейту, двигает offset,
+возвращает ответы) → **Telegram** sendMessage. Команды: `/журнал`, `/купил <id лота> [цена]`,
+`/продал <id сделки> <цена>`, `/help`. Кнопку «Купил» на пуш-карточке (`buy:<lot_id>`) бот уже понимает.
+
+## Подключение (после деплоя sql/deals.sql, sql/journal_capture.sql, sql/tg_router.sql, sql/tg_poll.sql)
+1. **Бот и токен УЖЕ ЕСТЬ** (ПЕРЕКУП AI, с push-теста 12.06). Нового НЕ создавать.
+2. **Токен для HTTP-ноды:** BotFather → `/mybots` → ПЕРЕКУП AI → **API Token** → скопируй. В ноде **Get
+   updates** замени `PASTE_YOUR_BOT_TOKEN` в URL на этот токен. (push шлёт через credential; опрос дёргает
+   URL напрямую, токен в URL — как у ингеста, RR-14.)
+3. **Импорт**: Ctrl+V на холст или Import from File → в Postgres-нодах выбрать `Postgres account`, в
+   Telegram-ноде `Telegram account` (подхватятся по имени).
+4. **Активировать** (active=ON). Опрос пойдёт раз в 5с (интервал — поле `secondsInterval`; реже = тише лог).
+5. **Тест**: боту `/help` → список команд. (`/журнал` после привязки chat_id ниже.)
+6. **chat_id**: узнай свой id (напиши `@userinfobot` → пришлёт число) →
+   `update client_configs set chat_id='ЧИСЛО' where client_id='vovchik';` → боту `/журнал` → сводка/«пусто».
+
+Безопасность: чужой chat_id (не в `client_configs`) → вежливый отказ (RR-08). Захват — канон
+`buy_lot`/`mark_sold` (навар не дублируется, NEW-4). offset в `bot_state` — чтобы не отвечать дважды.
+Первое включение может ответить на старые сообщения (backlog) — норма, дальше только новые.

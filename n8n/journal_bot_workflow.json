@@ -3,65 +3,72 @@
   "nodes": [
     {
       "parameters": {
-        "updates": ["message", "callback_query"],
-        "additionalFields": {}
+        "rule": { "interval": [{ "field": "seconds", "secondsInterval": 5 }] }
       },
-      "type": "n8n-nodes-base.telegramTrigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
-      "position": [0, 0],
-      "id": "22222222-2222-2222-2222-222222222201",
-      "name": "On message / button",
-      "webhookId": "journal-bot-001",
-      "credentials": {
-        "telegramApi": { "name": "Telegram account" }
-      }
+      "position": [-40, 0],
+      "id": "22222222-2222-2222-2222-222222222301",
+      "name": "Every 5s"
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "select * from public.tg_router($1::jsonb);",
-        "options": {
-          "queryReplacement": "={{ [JSON.stringify($json)] }}"
-        }
+        "query": "select tg_offset from bot_state where id = 1;",
+        "options": {}
       },
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
-      "position": [220, 0],
-      "id": "22222222-2222-2222-2222-222222222202",
-      "name": "tg_router (brain)",
-      "credentials": {
-        "postgres": { "name": "Postgres account" }
-      }
+      "position": [180, 0],
+      "id": "22222222-2222-2222-2222-222222222302",
+      "name": "Read offset",
+      "credentials": { "postgres": { "name": "Postgres account" } }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.telegram.org/botPASTE_YOUR_BOT_TOKEN/getUpdates?offset={{ $json.tg_offset }}&timeout=0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [400, 0],
+      "id": "22222222-2222-2222-2222-222222222303",
+      "name": "Get updates"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "select * from public.tg_poll($1::jsonb);",
+        "options": { "queryReplacement": "={{ [JSON.stringify($json.result || [])] }}" }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [620, 0],
+      "id": "22222222-2222-2222-2222-222222222304",
+      "name": "tg_poll (brain)",
+      "credentials": { "postgres": { "name": "Postgres account" } }
     },
     {
       "parameters": {
         "chatId": "={{ $json.chat_id }}",
         "text": "={{ $json.reply }}",
-        "additionalFields": {
-          "appendAttribution": false
-        }
+        "additionalFields": { "appendAttribution": false }
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
-      "position": [440, 0],
-      "id": "22222222-2222-2222-2222-222222222203",
+      "position": [840, 0],
+      "id": "22222222-2222-2222-2222-222222222305",
       "name": "Send reply",
-      "credentials": {
-        "telegramApi": { "name": "Telegram account" }
-      }
+      "credentials": { "telegramApi": { "name": "Telegram account" } }
     }
   ],
   "pinData": {},
   "connections": {
-    "On message / button": {
-      "main": [[{ "node": "tg_router (brain)", "type": "main", "index": 0 }]]
-    },
-    "tg_router (brain)": {
-      "main": [[{ "node": "Send reply", "type": "main", "index": 0 }]]
-    }
+    "Every 5s": { "main": [[{ "node": "Read offset", "type": "main", "index": 0 }]] },
+    "Read offset": { "main": [[{ "node": "Get updates", "type": "main", "index": 0 }]] },
+    "Get updates": { "main": [[{ "node": "tg_poll (brain)", "type": "main", "index": 0 }]] },
+    "tg_poll (brain)": { "main": [[{ "node": "Send reply", "type": "main", "index": 0 }]] }
   },
   "active": false,
-  "settings": {
-    "executionOrder": "v1"
-  }
+  "settings": { "executionOrder": "v1" }
 }
