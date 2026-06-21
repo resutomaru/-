@@ -188,14 +188,11 @@ CSS-переменные из `Telegram.WebApp.themeParams` (`bg_color`, `text_c
 - **Sheets-мост** (после ядра mini-app): коннектор читает `journal_list`/`config_get` → лист; правки листа →
   `journal_update`/`config_update` (backend-design §8). Привычка перекупа к таблице остаётся.
 
-## 8. Хостинг (mini-app нужен публичный HTTPS)
-| Вариант | Плюс | Минус | Вердикт |
-|---|---|---|---|
-| **GitHub Pages** | бесплатно, HTTPS, git-native (push→деплой), всё в `resutomaru/-` | публичность репо/Pages | **рекоменд. для прототипа** |
-| Vercel/Netlify | free, авто-деплой из git, домены, serverless | +вендор, чуть настройки | апгрейд-путь |
-| Supabase Storage | один вендор с БД | менее удобно для SPA | запасной |
-**План:** mini-app в папке `app/` репозитория → GitHub Pages (`https://resutomaru.github.io/-/app/`). Anon-key и
-project-URL в клиентском конфиге (anon публичен — безопасно). Апгрейд на Vercel при своём домене.
+## 8. Хостинг — Vercel (выбрано владельцем 20.06)
+mini-app нужен публичный HTTPS. **Vercel:** импорт репо `resutomaru/-`, Root Directory = `app`, авто-деплой из git
+при каждом пуше, вход через GitHub, бесплатно; работает и с приватным репо (без возни с публичностью, в отличие от
+GitHub Pages); свой домен — позже. Anon-key и project-URL — в `app/config.js` (anon публичен — безопасно).
+Альтернативы (не выбраны): GitHub Pages (free только для публичного репо), Supabase Storage.
 
 ## 9. Предохранители фронта (карта на risk-register)
 - **RR-07 (спам/потоп):** лимиты/тихие часы/дедуп — уже на сервере (`push_queue`). Фронт их не обходит.
@@ -235,3 +232,5 @@ project-URL в клиентском конфиге (anon публичен — б
 - 2026-06-20 — чертёж v1 заведён. Решения владельца: телефон-first mini-app, главный экран = дайджест,
   авто-тема под Telegram. Стек — vanilla + Telegram SDK + fetch к PostgREST (план Б: initData на вызов).
   Старт — пилон 1 (каркас + онбординг). Бэкенд (1a–2b) и завод не трогаем — проверены на проде.
+- 2026-06-20 (уточнения) — онбординг = СРАЗУ инвайт-коды (`redeem_invite` в пилоне 1); дашборд = блоком на
+  Главной; хостинг = **Vercel**. Пилон 1 собран: `sql/api_auth_invite.sql` + `app/` (shell, онбординг, дайджест).
