@@ -54,7 +54,8 @@ scored as (
                           m.condition, m.title || ' ' || coalesce(m.description,'')) as score
   from matched m
 )
-select client_id, id, title, url, price, median_price, sample_size, basis,
+-- url: каноничная ссылка avito.ru/<номер> (slug из rest-app битый — склейка номера → 404)
+select client_id, id, title, 'https://www.avito.ru/' || id as url, price, median_price, sample_size, basis,
        скидка_проц, item_category, position_key, condition, region, city,
        posted_at, n_photos, trust, score
 from scored

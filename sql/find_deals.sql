@@ -31,7 +31,8 @@ with base as (
     and l.is_component is distinct from false
     and l.item_category in ('gpu','cpu','ram','mobo','ssd','psu')
 )
-select b.id, b.title, b.url, b.price, b.median_price, b.sample_size, b.basis,
+-- url: каноничная ссылка avito.ru/<номер> (slug из rest-app битый — склеивает номер с названием → 404)
+select b.id, b.title, 'https://www.avito.ru/' || b.id as url, b.price, b.median_price, b.sample_size, b.basis,
        round(100 * b.discount)::int as скидка_проц,
        b.item_category, b.position_key, b.condition, b.region, b.city,
        b.posted_at, b.n_photos,
